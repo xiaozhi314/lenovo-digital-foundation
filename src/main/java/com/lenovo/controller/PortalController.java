@@ -27,7 +27,7 @@ public class PortalController {
 	}
 	
 	//遍历
-    @RequestMapping({"/","listJob"})
+    @RequestMapping({"/","logs_db_to_ludp_tst"})
     public String listJob(@RequestParam(value = "name",defaultValue = "") String name,
                            Model model, @RequestParam(value = "start", defaultValue = "1") int start,
                            @RequestParam(value = "size", defaultValue = "100") int size) throws Exception {

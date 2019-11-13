@@ -96,13 +96,13 @@
       </div>
 	  <div align="center">
             <a th:unless="${pages.isFirstPage}"
-               th:href="@{/portal/listJob(name=${name})}">首 页</a>
+               th:href="@{/portal/logs_db_to_ludp_tst(name=${name})}">首 页</a>
             <a th:unless="${pages.isFirstPage}"
-               th:href="@{/portal/listJob(start=${pages.hasPreviousPage}?${pages.prePage}:1, name=${name})}">上一页</a>
+               th:href="@{/portal/logs_db_to_ludp_tst(start=${pages.hasPreviousPage}?${pages.prePage}:1, name=${name})}">上一页</a>
             <a th:unless="${pages.isLastPage}"
-               th:href="@{/portal/listJob(start=${pages.hasNextPage}?${pages.nextPage}:${pages.pages}, name=${name})}">下一页</a>
+               th:href="@{/portal/logs_db_to_ludp_tst(start=${pages.hasNextPage}?${pages.nextPage}:${pages.pages}, name=${name})}">下一页</a>
             <a th:unless="${pages.isLastPage}"
-               th:href="@{/portal/listJob(start=${pages.pages}, name=${name})}">末 页</a>
+               th:href="@{/portal/logs_db_to_ludp_tst(start=${pages.pages}, name=${name})}">末 页</a>
       </div>
     </div>
   </div>
