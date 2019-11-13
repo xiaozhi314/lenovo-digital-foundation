@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.lenovo.entity.Job;
+import com.lenovo.pojo.Job;
 
 @Controller
 @RequestMapping("/portal")
@@ -40,9 +40,6 @@ public class jdbcController {
 				
 				return job;
 			}});
-//		for(Job job:jobList) {
-//			System.out.println(job.getJob_name());
-//		}
 		map.addAttribute("jobs",jobList);
 		return "job"; 
 	}

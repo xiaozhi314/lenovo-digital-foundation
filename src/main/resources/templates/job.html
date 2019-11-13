@@ -59,14 +59,15 @@
   <div class="row">
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
-        <li><a href="#">Overview </a></li>
-        <li class="active"><a href="/portal/logs_db_to_ludp_tst">logs_db_to_ludp_tst<span class="sr-only">(current)</span></a></li>
+        <li><a href="/portal/index">Overview </a></li>
+        <li class="active"><a href="#">logs_db_to_ludp_tst<span class="sr-only">(current)</span></a></li>
         <li><a href="#">logs_file_to_ludp_tst</a></li>
         <li><a href="#">...</a></li>
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
       <h1 class="page-header">TEST</h1>
+	  
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
@@ -81,7 +82,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr th:each="job : ${jobs}">
+          <tr th:each="job : ${pages.list}">
 			<td th:text="${job.job_name}"></td>
 			<td th:text="${job.source_table}"></td>
 			<td th:text="${job.target_table}"></td>
@@ -92,6 +93,16 @@
 		  </tr>
           </tbody>
         </table>
+      </div>
+	  <div align="center">
+            <a th:unless="${pages.isFirstPage}"
+               th:href="@{/portal/listJob(name=${name})}">首 页</a>
+            <a th:unless="${pages.isFirstPage}"
+               th:href="@{/portal/listJob(start=${pages.hasPreviousPage}?${pages.prePage}:1, name=${name})}">上一页</a>
+            <a th:unless="${pages.isLastPage}"
+               th:href="@{/portal/listJob(start=${pages.hasNextPage}?${pages.nextPage}:${pages.pages}, name=${name})}">下一页</a>
+            <a th:unless="${pages.isLastPage}"
+               th:href="@{/portal/listJob(start=${pages.pages}, name=${name})}">末 页</a>
       </div>
     </div>
   </div>

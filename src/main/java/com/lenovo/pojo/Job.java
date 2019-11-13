@@ -1,4 +1,4 @@
-package com.lenovo.entity;
+package com.lenovo.pojo;
 
 import java.util.Date;
 
