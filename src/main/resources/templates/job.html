@@ -19,6 +19,15 @@
 
   <!-- Custom styles for this template -->
   <link href="../../dist/css/dashboard.css" rel="stylesheet">
+  
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="../../media/css/jquery.dataTables.css">
+ 
+  <!-- jQuery -->
+  <script type="text/javascript" charset="utf8" src="../../media/js/jquery.js"></script>
+ 
+  <!-- DataTables -->
+  <script type="text/javascript" charset="utf8" src="../../media/js/jquery.dataTables.js"></script>
 
   <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
   <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -69,7 +78,7 @@
       <h1 class="page-header">TEST</h1>
 	  
       <div class="table-responsive">
-        <table class="table table-striped">
+        <table id="table_jobs" class="table table-striped">
           <thead>
           <tr>
             <th>Job Name</th>
@@ -93,7 +102,9 @@
 		  </tr>
           </tbody>
         </table>
+					
       </div>
+	  
 	  <div align="center">
             <a th:unless="${pages.isFirstPage}"
                th:href="@{/portal/logs_db_to_ludp_tst}">首 页</a>
@@ -107,7 +118,11 @@
     </div>
   </div>
 </div>
-
+<script>
+$(document).ready( function () {
+				$('#table_jobs').DataTable();
+			} );
+</script>
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
