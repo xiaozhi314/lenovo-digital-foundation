@@ -29,7 +29,7 @@ public class PortalController {
 	//遍历
     @RequestMapping({"/","logs_db_to_ludp_tst"})
     public String listJob(Model model, @RequestParam(value = "start", defaultValue = "1") int start,
-                           @RequestParam(value = "size", defaultValue = "100") int size) throws Exception {
+                           @RequestParam(value = "size", defaultValue = "1000") int size) throws Exception {
         PageHelper.startPage(start, size, "job_name asc");
         List<Job> jobList = jobsMapper.getJobsList();
         PageInfo<Job> page = new PageInfo<>(jobList);
