@@ -120,7 +120,9 @@
 </div>
 <script>
 $(document).ready( function () {
-				$('#table_jobs').DataTable();
+				$('#table_jobs').DataTable({
+                  "serverSide": true
+				});
 			} );
 </script>
 <!-- Bootstrap core JavaScript
