@@ -1,42 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <title>TEST</title>
-
-  <!-- Bootstrap core CSS -->
-  <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-
-  <!-- Custom styles for this template -->
-  <link href="../../dist/css/dashboard.css" rel="stylesheet">
-  
-  <!-- DataTables CSS -->
-  <link rel="stylesheet" type="text/css" href="../../media/css/jquery.dataTables.css">
- 
-  <!-- jQuery -->
-  <script type="text/javascript" charset="utf8" src="../../media/js/jquery.js"></script>
- 
-  <!-- DataTables -->
-  <script type="text/javascript" charset="utf8" src="../../media/js/jquery.dataTables.js"></script>
-
-  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-  <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
-
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/header">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 
 <body>
@@ -75,7 +40,7 @@
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
       <h1 class="page-header">TEST</h1>
-	  
+	  <input type="text" name="queryInput" id="queryInput" placeholder="搜索" style="width:250px" class="input-text">
       <div class="table-responsive">
         <table id="dynamic-table" class="table table-striped">
          <thead>
@@ -88,7 +53,7 @@
                 <th>Source Row Number</th>
                 <th>Target Row Number</th>
             </tr>
-            </thead>
+            </thead>  
         </table>
 					
       </div>
@@ -97,13 +62,14 @@
   </div>
 </div>
 <script>
+ document.title = 'TEST'
  $(function () {
         //提示信息
         var lang = {
             "sProcessing": "处理中...",
             "sLengthMenu": "每页 _MENU_ 项",
             "sZeroRecords": "没有匹配结果",
-            "sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_ 项。",
+            "sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_项。",
             "sInfoEmpty": "当前显示第 0 至 0 项，共 0 项",
             "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
             "sInfoPostFix": "",
@@ -128,12 +94,14 @@
         //初始化表格
         var table = $("#dynamic-table").dataTable({
             language:lang,  //提示信息
+            //scrollY: 400,   //表格内滑动
             autoWidth: false,  //禁用自动调整列宽
-            lengthMenu:[1000,5000,10000],
+            bLengthChange: false,
+            //lengthMenu:[20],
             stripeClasses: ["odd", "even"],  //为奇偶行加上样式，兼容不支持CSS伪类的场合
             processing: true,  //隐藏加载提示,自行处理
             serverSide: true,  //启用服务器端分页
-            searching: true,  //禁用原生搜索
+            searching: false,  //禁用原生搜索
             orderMulti: true,  //启用多列排序
             ordering:true,//使用排序
             bStateSave:true,//记录cookie
@@ -151,6 +119,7 @@
                 param.pageSize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
                 param.startIndex = data.start;//开始的记录序号
                 param.pageIndex = (data.start / data.length)+1;//当前页码
+                param.query = $("input[name='queryInput']").val();//获取查询信息
                  console.log(data.order[0]);
                 param.order = data.order[0];
                 //console.log(param);
@@ -161,46 +130,41 @@
                     cache: false,  //禁用缓存
                     data: param,  //传入组装的参数
                     dataType: "json",
-                    success: function (result) {
-                        console.log("result"+result);
-                        //setTimeout仅为测试延迟效果
-                        setTimeout(function () {
+                    success: function(result) {
+                       		 console.log(result);
                             //封装返回数据
                             var returnData = {};
                             returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
-                            returnData.recordsTotal = result.total;//返回数据全部记录
-                            returnData.recordsFiltered = result.total;//后台不实现过滤功能，每次查询均视作全部结果
+                            returnData.recordsTotal = result.totalCount;//返回数据全部记录
+                            returnData.recordsFiltered = result.totalCount;//后台不实现过滤功能，每次查询均视作全部结果
                             returnData.data = result.data;//返回的数据列表
-                            console.log("return data"+returnData.recordsTotal);
                             //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
                             //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
                             callback(returnData);
-                        }, 200);
                     }
                 });
             },
             //列表表头字段
             columns: [
-             { "data": "job_name" },
-                { "data": "source_table" },
+             	{ "data": "job_name"},
+                { "data": "source_table"},
                 { "data": "target_table" },
                 { "data": "start_time" },
-                { "data": "end_time" },
-                { "data": "source_row_number" },
+                { "data": "end_time"
+                //,render: function (date) {
+                //return $.format.date(new Date(date), "yyyy-MM-dd HH:mm:ss");}
+            	},
+                { "data": "source_row_number"},
                 { "data": "target_row_number" }
             ]
         }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
+        
+        $("#queryInput").on("input",function(){
+            table.ajax.reload();
+        });
+        
     });
+   
 </script>
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-<script src="../../dist/js/bootstrap.min.js"></script>
-<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-<script src="../../assets/js/vendor/holder.min.js"></script>
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 </body>
 </html>

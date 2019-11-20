@@ -1,5 +1,7 @@
 package com.lenovo.pojo;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Job {
@@ -12,6 +14,7 @@ public class Job {
 	private String source_row_number;
 	private String target_row_number;
 	
+	SimpleDateFormat bartDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 	
 	public String getJob_name() {
 		return job_name;
@@ -31,14 +34,14 @@ public class Job {
 	public void setTarget_table(String target_table) {
 		this.target_table = target_table;
 	}
-	public Date getStart_time() {
-		return start_time;
+	public String getStart_time() {
+		return bartDateFormat.format(start_time);
 	}
 	public void setStart_time(Date start_time) {
 		this.start_time = start_time;
 	}
-	public Date getEnd_time() {
-		return end_time;
+	public String getEnd_time() {
+		return bartDateFormat.format(end_time);
 	}
 	public void setEnd_time(Date end_time) {
 		this.end_time = end_time;
