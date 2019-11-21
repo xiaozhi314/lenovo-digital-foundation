@@ -34,14 +34,27 @@ public class Job {
 	public void setTarget_table(String target_table) {
 		this.target_table = target_table;
 	}
-	public String getStart_time() {
-		return bartDateFormat.format(start_time);
-	}
+
+//	public Date getStart_time() {
+//		return start_time;
+//	}
+//	public Date getEnd_time() {
+//		return end_time;
+//	}
 	public void setStart_time(Date start_time) {
 		this.start_time = start_time;
 	}
+	public String getStart_time() {
+		if(start_time!=null)
+			return bartDateFormat.format(start_time);
+		else
+			return null;
+	}
 	public String getEnd_time() {
-		return bartDateFormat.format(end_time);
+		if(end_time!=null)
+			return bartDateFormat.format(end_time);
+		else
+			return null;
 	}
 	public void setEnd_time(Date end_time) {
 		this.end_time = end_time;

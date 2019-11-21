@@ -56,6 +56,7 @@ public class PortalController {
     	PageHelper.startPage(startIndex,pageSize,OrderBy);
         System.out.println("start:"+ startIndex + "size:"+ pageSize + "index:"+pageIndex);
         List<Job> jobList = jobsMapper.FindAllByQuery(query.trim());
+//		List<Job> jobList = jobsMapper.getJobsList();
         PageInfo<Job> page = new PageInfo<>(jobList);
         //返回DataTable使用
         RtPageInfo pageInfo = new RtPageInfo();

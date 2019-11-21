@@ -97,14 +97,14 @@
             //scrollY: 400,   //表格内滑动
             autoWidth: false,  //禁用自动调整列宽
             bLengthChange: false,
-            //lengthMenu:[20],
+            // lengthMenu:[10],
             stripeClasses: ["odd", "even"],  //为奇偶行加上样式，兼容不支持CSS伪类的场合
             processing: true,  //隐藏加载提示,自行处理
             serverSide: true,  //启用服务器端分页
             searching: false,  //禁用原生搜索
             orderMulti: true,  //启用多列排序
             ordering:true,//使用排序
-            bStateSave:true,//记录cookie
+            bStateSave:false,//记录cookie
             order: [],  //取消默认排序查询,否则复选框一列会出现小箭头
             renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
             pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
@@ -150,11 +150,8 @@
                 { "data": "source_table"},
                 { "data": "target_table" },
                 { "data": "start_time" },
-                { "data": "end_time"
-                //,render: function (date) {
-                //return $.format.date(new Date(date), "yyyy-MM-dd HH:mm:ss");}
-            	},
-                { "data": "source_row_number"},
+                { "data": "end_time", defaultContent: " "},
+                { "data": "source_row_number", defaultContent: " "},
                 { "data": "target_row_number" }
             ]
         }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
