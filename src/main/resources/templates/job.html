@@ -5,7 +5,7 @@
 </head>
 
 <body>
-
+  <!--  
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -27,18 +27,24 @@
     </div>
   </div>
 </nav>
-
+-->
+<div id="wrapper">
+        <nav th:include="nav.html">
+        </nav>
+        <!-- /#sidebar-wrapper -->
+<!--
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3 col-md-2 sidebar">
+      <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
         <li><a href="/portal/index">Overview </a></li>
         <li class="active"><a href="#">logs_db_to_ludp_tst<span class="sr-only">(current)</span></a></li>
         <li><a href="#">logs_file_to_ludp_tst</a></li>
         <li><a href="#">...</a></li>
       </ul>
-    </div>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    </div>-->
+    
+   <!-- <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"> --> 
       <h1 class="page-header">TEST</h1>
 	  <input type="text" name="queryInput" id="queryInput" placeholder="搜索" style="width:250px" class="input-text">
       <div class="table-responsive">
@@ -54,13 +60,16 @@
                 <th>Target Row Number</th>
             </tr>
             </thead>  
-        </table>
-					
+        </table>	
       </div>
-	  
-    </div>
+    <!-- </div> -->
+    <!--  
   </div>
-</div>
+</div> -->
+
+<!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
 <script>
  document.title = 'TEST'
  $(function () {
@@ -159,9 +168,9 @@
         $("#queryInput").on("input",function(){
             table.ajax.reload();
         });
-        
     });
-   
 </script>
 </body>
+<footer th:include="/footer">
+</footer>
 </html>
