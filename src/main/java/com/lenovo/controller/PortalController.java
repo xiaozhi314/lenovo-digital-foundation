@@ -20,7 +20,6 @@ import com.lenovo.pojo.Interface;
 import com.lenovo.pojo.RtPageInfo;
 
 
-
 @Controller
 @RequestMapping("portal")
 public class PortalController {
@@ -55,7 +54,7 @@ public class PortalController {
     	if(req.getParameter("order[column]")!=null&&req.getParameter("order[dir]")!=null)
         	 OrderBy= s[Integer.parseInt(req.getParameter("order[column]"))]+" "+req.getParameter("order[dir]");
     	
-    	PageHelper.startPage(startIndex,pageSize,OrderBy);
+    	PageHelper.startPage(pageIndex,pageSize,OrderBy);
         System.out.println("start:"+ startIndex + "size:"+ pageSize + "index:"+pageIndex);
         List<Interface> interfaceList = interfacesMapper.FindAllByQuery(query.trim(),source.trim(),target.trim(),platform.trim());
         PageInfo<Interface> page = new PageInfo<>(interfaceList);
