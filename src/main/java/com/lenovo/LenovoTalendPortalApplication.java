@@ -10,5 +10,4 @@ public class LenovoTalendPortalApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LenovoTalendPortalApplication.class, args);
 	}
-
 }

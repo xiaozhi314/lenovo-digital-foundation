@@ -23,7 +23,36 @@ public class Interface {
 	private String mapping_name;
 	private String last_modified_by;
 	private Date last_modifyied_date;
+	private String source_channel_detail;
+	private String target_channel_detail;
+	private String receiver_condition;
+	private String mapping_condition;
 	
+	
+	public String getSource_channel_detail() {
+		return source_channel_detail;
+	}
+	public void setSource_channel_detail(String source_channel_detail) {
+		this.source_channel_detail = source_channel_detail;
+	}
+	public String getTarget_channel_detail() {
+		return target_channel_detail;
+	}
+	public void setTarget_channel_detail(String target_channel_detail) {
+		this.target_channel_detail = target_channel_detail;
+	}
+	public String getReceiver_condition() {
+		return receiver_condition;
+	}
+	public void setReceiver_condition(String receiver_condition) {
+		this.receiver_condition = receiver_condition;
+	}
+	public String getMapping_condition() {
+		return mapping_condition;
+	}
+	public void setMapping_condition(String mapping_condition) {
+		this.mapping_condition = mapping_condition;
+	}
 	SimpleDateFormat bartDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public String getInterface_id() {
