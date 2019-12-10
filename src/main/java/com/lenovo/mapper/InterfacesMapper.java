@@ -35,7 +35,8 @@ public interface InterfacesMapper {
                 		+ "source_system_name LIKE '%"+s+"%' OR source_interface LIKE '%"+s+"%' OR source_interface_type LIKE '%"+s+"%'"
                 		+ "OR source_technical_interface LIKE '%"+s+"%' OR source_channel LIKE '%"+s+"%' OR target_system_name LIKE '%"+s+"%' "
                 		+ "OR target_interface LIKE '%"+s+"%' OR target_interface_type LIKE '%"+s+"%' OR target_technical_interface LIKE '%"+s+"%' "
-                		+ "OR target_channel LIKE '%"+s+"%' OR mapping_name LIKE '%"+s+"%' OR last_modified_by LIKE '%"+s+"%'";
+                		+ "OR target_channel LIKE '%"+s+"%' OR mapping_name LIKE '%"+s+"%' OR last_modified_by LIKE '%"+s+"%' OR source_channel_detail LIKE '%"+s+"%' "
+                		+ "OR target_channel_detail LIKE '%"+s+"%' OR receiver_condition LIKE '%"+s+"%' OR mapping_condition LIKE '%"+s+"%'";
 //    					+ "OR last_modifyied_date LIKE '%"+s+"%'";
         	}
 			return sql;

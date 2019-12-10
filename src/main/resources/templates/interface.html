@@ -46,11 +46,16 @@
                 <th>Mapping Name</th>
                 <th>Last Modified By</th>
                 <th>Last Modifyied Date</th>
-                
+                <th>Receiver Condition</th>
+                <th>Mapping Condition</th>
+
             </tr>
             </thead>  
         </table>	
       </div>
+    <div id="channelDetailDiv" style="display: none;">
+        <h2 class="active">Detail Information</h2>
+        <p class="active" id="payload"></p></div>
 </div>
     <!-- /#wrapper -->
 <script>
@@ -87,7 +92,7 @@
         //初始化表格
         var table = $("#table").dataTable({
             language:lang,  //提示信息
-            //scrollY: 400,   //表格内滑动
+            //scrollX: 400,   //表格内滑动
             autoWidth: false,  //禁用自动调整列宽
             bLengthChange: false,
             // lengthMenu:[10],
@@ -158,8 +163,45 @@
                 { "data": "target_channel"},
                 { "data": "mapping_name" },
                 { "data": "last_modified_by" },
-                { "data": "last_modifyied_date"}
-            ]
+                { "data": "last_modifyied_date"},
+                { "data": "receiver_condition"},
+                { "data": "source_channel_detail"}
+            ],
+            "columnDefs": [
+                {
+                    "targets": [7],
+                    render: function (data, type, row) {
+                        if (data) {
+                                var source = escape(row.source_channel_detail);
+                                return "<a href='javascript:void(0);'onclick='show(\"" + source + "\")'>" + data + "</a>"
+                        }else {
+                                return "";
+                        }
+                    }
+                },
+                {
+                    "targets": [12],
+                    render: function (data, type, row) {
+                        if (data) {
+                            var target = escape(row.target_channel_detail);
+                            return "<a href='javascript:void(0);'onclick='show(\"" + target + "\")'>" + data + "</a>"
+                        }else {
+                            return "";
+                        }
+                    }
+                },
+                {
+                    "targets": [16,17],
+                    render: function (data, type, row) {
+                        if (data) {
+                            data = escape(data);
+                            return "<a href='javascript:void(0);'onclick='show(\"" + data + "\")'>With Condition</a>"
+                        }else {
+                            return "";
+                        }
+                    }
+                },
+            ],
         }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
         
         $("#queryInput").on("input",function(){
@@ -168,7 +210,13 @@
     });
     function search() {
         $("#table").dataTable().fnDraw();
-    	}
+    }
+    function show(s) {
+    	s = unescape(s);
+    	//console.log(s);
+        $("#channelDetailDiv").show();
+    	document.getElementById("payload").innerText=s;
+    }
 </script>
 </body>
 <footer th:include="/footer">
