@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:include="/header">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 </head>
 
 <body>
 <div id="wrapper">
-      <nav th:include="nav.html"></nav>
-      <h1 class="page-header">Digital Foundation</h1>
-	  <input type="text" name="queryInput" id="queryInput" placeholder="搜索" style="width:250px" class="input-text">
-      <!-- form -->
-      <div class="row clearfix">
-      <div class="col-md-12 column">
-        <p><span>Source System Name:&nbsp;&nbsp;</span><input type="text" id="source"/>&nbsp;
-        <span>Target System Name:&nbsp;&nbsp;</span><input type="text" id="target"/></p>
-        <p><span>Integration Platform&nbsp;&nbsp;</span><select
-                id="platform">
-            <option value=""></option>
-            <option value="PO">PO</option>
-            <option value="Talend">Talend</option>
-            <option value="DS">DS</option>
-            <option value="WSO2">WSO2</option>
-        </select></p>
-        &nbsp;<button type="button" class="btn btn-default btn-primary" onclick="search()">Search</button>
-      </div>
-      </div>
-      <!-- table -->
-      <div class="table-responsive">
-        <table id="table" class="table table-striped" >
-         <thead>
+    <nav th:include="nav.html"></nav>
+    <h1 class="page-header">Digital Foundation</h1>
+    <input type="text" name="queryInput" id="queryInput" placeholder="搜索" style="width:250px" class="input-text">
+    <!-- form -->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <p><span>Source System Name:&nbsp;&nbsp;</span><input type="text" id="source"/>&nbsp;
+                <span>Target System Name:&nbsp;&nbsp;</span><input type="text" id="target"/></p>
+            <p><span>Integration Platform&nbsp;&nbsp;</span><select
+                    id="platform">
+                <option value=""></option>
+                <option value="PO">PO</option>
+                <option value="Talend">Talend</option>
+                <option value="DS">DS</option>
+                <option value="WSO2">WSO2</option>
+            </select></p>
+            &nbsp;<button type="button" class="btn btn-default btn-primary" onclick="search()">Search</button>
+        </div>
+    </div>
+    <!-- table -->
+    <div class="table-responsive">
+        <table id="table" class="table table-striped">
+            <thead>
             <tr>
                 <th>Interface id</th>
                 <th>Interface Name</th>
@@ -48,21 +48,20 @@
                 <th>Last Modifyied Date</th>
                 <th>Receiver Condition</th>
                 <th>Mapping Condition</th>
-
             </tr>
-            </thead>  
-        </table>	
-      </div>
+            </thead>
+        </table>
+    </div>
     <div id="channelDetailDiv" style="display: none;">
         <h2>Detail Information</h2>
         <pre class='hljs'><code><p id="payload"></p></code></pre>
     </div>
 </div>
-    <!-- /#wrapper -->
+<!-- /#wrapper -->
 <script>
- document.title = 'Digital Fundation';
- 
- $(function () {
+    document.title = 'Digital Fundation';
+
+    $(function () {
         //初始化表格
         var table = $("#table").dataTable({
             //scrollX: 400,   //表格内滑动
@@ -71,8 +70,8 @@
             serverSide: true,  //启用服务器端分页
             searching: false,  //禁用原生搜索
             orderMulti: true,  //启用多列排序
-            ordering:true,//使用排序
-            bStateSave:false,//记录cookie
+            ordering: true,//使用排序
+            bStateSave: false,//记录cookie
             order: [],  //取消默认排序查询,否则复选框一列会出现小箭头
             pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
 
@@ -82,14 +81,14 @@
                 var param = {};
                 param.pageSize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
                 param.startIndex = data.start;//开始的记录序号
-                param.pageIndex = (data.start / data.length)+1;//当前页码
+                param.pageIndex = (data.start / data.length) + 1;//当前页码
                 param.query = $("input[name='queryInput']").val();//获取查询信息
-                 console.log(data.order[0]);
+                console.log(data.order[0]);
                 param.order = data.order[0];
                 param.source = $("#source").val();
                 param.target = $("#target").val();
                 param.platform = $("#platform").val();
-                
+
                 console.log(param);
                 //ajax请求数据
                 $.ajax({
@@ -98,52 +97,52 @@
                     cache: false,  //禁用缓存
                     data: param,  //传入组装的参数
                     dataType: "json",
-                    success: function(result) {
-                       		 console.log(result);
-                            //封装返回数据
-                            var returnData = {};
-                            returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
-                            returnData.recordsTotal = result.totalCount;//返回数据全部记录
-                            returnData.recordsFiltered = result.totalCount;//后台不实现过滤功能，每次查询均视作全部结果
-                            returnData.data = result.data;//返回的数据列表
-                            //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
-                            //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
-                            callback(returnData);
+                    success: function (result) {
+                        console.log(result);
+                        //封装返回数据
+                        var returnData = {};
+                        returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                        returnData.recordsTotal = result.totalCount;//返回数据全部记录
+                        returnData.recordsFiltered = result.totalCount;//后台不实现过滤功能，每次查询均视作全部结果
+                        returnData.data = result.data;//返回的数据列表
+                        //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
+                        //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+                        callback(returnData);
                     }
                 });
             },
             //列表表头字段
             columns: [
-             	{ "data": "interface_id"},
-                { "data": "interface_name"},
-                { "data": "integration_platform" },
-                { "data": "source_system_name"},
-                { "data": "source_interface"},
-                { "data": "source_interface_type"},
-                { "data": "source_technical_interface"},
-                { "data": "source_channel"},
-                { "data": "target_system_name" },
-                { "data": "target_interface"},
-                { "data": "target_interface_type"},
-                { "data": "target_technical_interface"},
-                { "data": "target_channel"},
-                { "data": "mapping_name" },
-                { "data": "last_modified_by" },
-                { "data": "last_modifyied_date"},
-                { "data": "receiver_condition"},
-                { "data": "source_channel_detail"}
+                {"data": "interface_id"},
+                {"data": "interface_name"},
+                {"data": "integration_platform"},
+                {"data": "source_system_name"},
+                {"data": "source_interface"},
+                {"data": "source_interface_type"},
+                {"data": "source_technical_interface"},
+                {"data": "source_channel"},
+                {"data": "target_system_name"},
+                {"data": "target_interface"},
+                {"data": "target_interface_type"},
+                {"data": "target_technical_interface"},
+                {"data": "target_channel"},
+                {"data": "mapping_name"},
+                {"data": "last_modified_by"},
+                {"data": "last_modifyied_date"},
+                {"data": "receiver_condition"},
+                {"data": "source_channel_detail"}
             ],
             "columnDefs": [
                 {
                     "targets": [7],
                     render: function (data, type, row) {
                         if (data) {
-                                var source = escape(row.source_channel_detail);
-                                return "<a href='javascript:void(0);'onclick='show(\"" + source + "\")'>" + data + "</a>"
-                        }else {
-                                return "";
+                            var source = escape(row.source_channel_detail);
+                            return "<a href='javascript:void(0);'onclick='show(\"" + source + "\")'>" + data + "</a>"
+                        } else {
+                            return "";
                         }
-                    }
+                    }
                 },
                 {
                     "targets": [12],
@@ -151,45 +150,51 @@
                         if (data) {
                             var target = escape(row.target_channel_detail);
                             return "<a href='javascript:void(0);'onclick='show(\"" + target + "\")'>" + data + "</a>"
-                        }else {
+                        } else {
                             return "";
                         }
                     }
                 },
                 {
-                    "targets": [16,17],
+                    "targets": [16, 17],
                     render: function (data, type, row) {
                         if (data) {
                             data = escape(data);
                             return "<a href='javascript:void(0);'onclick='show(\"" + data + "\")'>With Condition</a>"
-                        }else {
+                        } else {
                             return "";
                         }
                     }
                 },
             ],
         }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
-        
-        $("#queryInput").on("input",function(){
+
+        //input refresh table
+        $("#queryInput").on("input", function () {
             table.ajax.reload();
         });
     });
+
+    //search button function
     function search() {
         $("#table").dataTable().fnDraw();
     }
+
+    //show code render
     function show(s) {
-    	s = unescape(s);
-    	s = s.replaceAll('<','&lt;').replaceAll('>','&gt;');
+        s = unescape(s);
+        s = s.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
         $("#payload").html("");
         $("#payload").append(s);
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
         $("#channelDetailDiv").show();
-
     }
-     String.prototype.replaceAll = function(s1,s2){
-         return this.replace(new RegExp(s1,"gm"),s2);
-     }
+
+    //replaceAll function define
+    String.prototype.replaceAll = function (s1, s2) {
+        return this.replace(new RegExp(s1, "gm"), s2);
+    }
 </script>
 
 </body>

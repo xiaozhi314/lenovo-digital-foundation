@@ -17,53 +17,51 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
-
 @Controller
 @RequestMapping("portal")
 public class PortalController {
-	@Resource
+    @Resource
     private InterfacesMapper interfacesMapper;
-	
-	@RequestMapping("/index")
-	public String index() {
-		return "index";
-	}
-	
-	@RequestMapping("/interface")
-	public String getInterfaces() {
-		return "interface";
-	}
-	
-	@ResponseBody
+
+    @RequestMapping("/index")
+    public String index() {
+        return "index";
+    }
+
+    @RequestMapping("/interface")
+    public String getInterfaces() {
+        return "interface";
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public RtPageInfo query(
             @RequestParam(required = false, name = "pageSize") Integer pageSize,
             @RequestParam(required = false, name = "startIndex") Integer startIndex,
             @RequestParam(required = false, name = "pageIndex") Integer pageIndex,
             String query, String source, String target, String platform,
-            HttpServletRequest req){
-    	
-    	String[] s = {"interface_id","interface_name","integration_platform","source_system_id","source_system_name","source_interface",
-    			"source_interface_type","source_technical_interface","source_channel","target_system_id","target_system_name"
-    			,"target_interface","target_interface_type","target_technical_interface","target_channel","mapping_id","mapping_name","last_modified_by"
-    			,"last_modifyied_date"};
-    	
+            HttpServletRequest req) {
+
+        String[] s = {"interface_id", "interface_name", "integration_platform", "source_system_id", "source_system_name", "source_interface",
+                "source_interface_type", "source_technical_interface", "source_channel", "target_system_id", "target_system_name"
+                , "target_interface", "target_interface_type", "target_technical_interface", "target_channel", "mapping_id", "mapping_name", "last_modified_by"
+                , "last_modifyied_date"};
+
         String OrderBy = "interface_id asc";
-    	if(req.getParameter("order[column]")!=null&&req.getParameter("order[dir]")!=null)
-        	 OrderBy= s[Integer.parseInt(req.getParameter("order[column]"))]+" "+req.getParameter("order[dir]");
-    	
-    	PageHelper.startPage(pageIndex,pageSize,OrderBy);
-        System.out.println("start:"+ startIndex + "size:"+ pageSize + "index:"+pageIndex);
-        List<Interface> interfaceList = interfacesMapper.FindAllByQuery(query.trim(),source.trim(),target.trim(),platform.trim());
+        if (req.getParameter("order[column]") != null && req.getParameter("order[dir]") != null)
+            OrderBy = s[Integer.parseInt(req.getParameter("order[column]"))] + " " + req.getParameter("order[dir]");
+
+        PageHelper.startPage(pageIndex, pageSize, OrderBy);
+        System.out.println("start:" + startIndex + "size:" + pageSize + "index:" + pageIndex);
+        List<Interface> interfaceList = interfacesMapper.FindAllByQuery(query.trim(), source.trim(), target.trim(), platform.trim());
         PageInfo<Interface> page = new PageInfo<>(interfaceList);
         //返回DataTable使用
         RtPageInfo pageInfo = new RtPageInfo();
         pageInfo.setData(page.getList());//这里是数据内容 List
-        pageInfo.setPageNum(startIndex/pageSize);//Integer
+        pageInfo.setPageNum(startIndex / pageSize);//Integer
         pageInfo.setPageSize(pageSize);//pageSize
         pageInfo.setTotalCount(page.getTotal());//BigInteger
-        
-        return pageInfo ;
+
+        return pageInfo;
     }
-	
 }

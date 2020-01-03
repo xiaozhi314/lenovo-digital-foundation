@@ -2,45 +2,45 @@ package com.lenovo.mapper;
 
 
 import com.lenovo.pojo.Interface;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.*;
-
 @Mapper
 public interface InterfacesMapper {
-	    
+
     //结构化sql
     @SelectProvider(type = InterfaceDaoProvider.class, method = "findInterfaceByQuery")
-    List<Interface> FindAllByQuery(String s,String source,String target,String platform);
+    List<Interface> FindAllByQuery(String s, String source, String target, String platform);
 
     class InterfaceDaoProvider {
-        public String findInterfaceByQuery(String s,String source,String target,String platform) {
-        	String sql = "select * from public.interface Where 1=1";
-        //	String temp = s.toLowerCase().replaceAll(" ", "");
-        	System.out.println("query: "+s+" source: "+source+" target: "+target+" platform: "+platform);
+        public String findInterfaceByQuery(String s, String source, String target, String platform) {
+            String sql = "select * from public.interface Where 1=1";
+            //	String temp = s.toLowerCase().replaceAll(" ", "");
+            System.out.println("query: " + s + " source: " + source + " target: " + target + " platform: " + platform);
 //        	System.out.println(platform.equals(""));
-        	if(source != "") {
-        		sql += " AND source_system_name LIKE '%"+source+"%'";
-        	}
-        	if(target != "") {
-        		sql += " AND target_system_name LIKE '%"+target+"%'";
-        	}
-        	if(platform != "") {
-        		sql += " AND integration_platform LIKE '%"+platform +"%'";
-        		return sql;
-        	}
-        	if(s != "") {
-        		sql += " AND interface_name LIKE '%"+s+"%' OR integration_platform LIKE '%"+s+"%' OR "
-                		+ "source_system_name LIKE '%"+s+"%' OR source_interface LIKE '%"+s+"%' OR source_interface_type LIKE '%"+s+"%'"
-                		+ "OR source_technical_interface LIKE '%"+s+"%' OR source_channel LIKE '%"+s+"%' OR target_system_name LIKE '%"+s+"%' "
-                		+ "OR target_interface LIKE '%"+s+"%' OR target_interface_type LIKE '%"+s+"%' OR target_technical_interface LIKE '%"+s+"%' "
-                		+ "OR target_channel LIKE '%"+s+"%' OR mapping_name LIKE '%"+s+"%' OR last_modified_by LIKE '%"+s+"%' OR source_channel_detail LIKE '%"+s+"%' "
-                		+ "OR target_channel_detail LIKE '%"+s+"%' OR receiver_condition LIKE '%"+s+"%' OR mapping_condition LIKE '%"+s+"%'";
+            if (source != "") {
+                sql += " AND source_system_name LIKE '%" + source + "%'";
+            }
+            if (target != "") {
+                sql += " AND target_system_name LIKE '%" + target + "%'";
+            }
+            if (platform != "") {
+                sql += " AND integration_platform LIKE '%" + platform + "%'";
+                return sql;
+            }
+            if (s != "") {
+                sql += " AND interface_name LIKE '%" + s + "%' OR integration_platform LIKE '%" + s + "%' OR "
+                        + "source_system_name LIKE '%" + s + "%' OR source_interface LIKE '%" + s + "%' OR source_interface_type LIKE '%" + s + "%'"
+                        + "OR source_technical_interface LIKE '%" + s + "%' OR source_channel LIKE '%" + s + "%' OR target_system_name LIKE '%" + s + "%' "
+                        + "OR target_interface LIKE '%" + s + "%' OR target_interface_type LIKE '%" + s + "%' OR target_technical_interface LIKE '%" + s + "%' "
+                        + "OR target_channel LIKE '%" + s + "%' OR mapping_name LIKE '%" + s + "%' OR last_modified_by LIKE '%" + s + "%' OR source_channel_detail LIKE '%" + s + "%' "
+                        + "OR target_channel_detail LIKE '%" + s + "%' OR receiver_condition LIKE '%" + s + "%' OR mapping_condition LIKE '%" + s + "%'";
 //    					+ "OR last_modifyied_date LIKE '%"+s+"%'";
-        	}
-			return sql;
-        	
+            }
+            return sql;
+
 //        	if(s != null) {
 //        		if(temp.contains("source=")&&temp.contains("target=")) {
 //        			System.out.println("进入");
@@ -73,5 +73,5 @@ public interface InterfacesMapper {
 //        }
         }
     }
-	
+
 }
