@@ -1,1 +1,1 @@
-# lenovo-talend-portal
+# lenovo-digital-foundation
