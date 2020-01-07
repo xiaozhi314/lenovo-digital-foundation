@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 
@@ -31,6 +35,30 @@ public class PortalController {
     @RequestMapping("/interface")
     public String getInterfaces() {
         return "interface";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/data", method = RequestMethod.GET)
+    public String mapData(){
+        InputStream is = this.getClass().getResourceAsStream("/static/data/les-miserables.gexf");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        try {
+            while((line = reader.readLine())!=null){
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("文件："+sb.toString());
+        return sb.toString();
     }
 
     @ResponseBody
