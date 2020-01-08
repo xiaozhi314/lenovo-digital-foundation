@@ -3,7 +3,9 @@ package com.lenovo.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lenovo.mapper.DigitalFoundationMapper;
 import com.lenovo.mapper.InterfacesMapper;
+import com.lenovo.pojo.DigitalFoundation;
 import com.lenovo.pojo.Interface;
 import com.lenovo.pojo.RtPageInfo;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,9 @@ import java.util.List;
 public class PortalController {
     @Resource
     private InterfacesMapper interfacesMapper;
+    @Resource
+    private DigitalFoundationMapper digitalfoundationMapper;
+
 
     @RequestMapping("/index")
     public String index() {
@@ -35,6 +40,11 @@ public class PortalController {
     @RequestMapping("/interface")
     public String getInterfaces() {
         return "interface";
+    }
+
+    @RequestMapping("/df")
+    public String getDf() {
+        return "df";
     }
 
     @ResponseBody
@@ -91,5 +101,40 @@ public class PortalController {
         pageInfo.setTotalCount(page.getTotal());//BigInteger
 
         return pageInfo;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/dfquery", method = RequestMethod.GET)
+    public RtPageInfo dfquery(
+            @RequestParam(required = false, name = "pageSize") Integer pageSize,
+            @RequestParam(required = false, name = "startIndex") Integer startIndex,
+            @RequestParam(required = false, name = "pageIndex") Integer pageIndex,
+            String query, String source, String target,
+            HttpServletRequest req) {
+        String[] s = {"interface_id", "interface_name", "source_interface", "source_interface_type", "source_system", "target_interface",
+                "target_interface_type", "target_system"};
+
+        String OrderBy = "interface_id asc";
+        if (req.getParameter("order[column]") != null && req.getParameter("order[dir]") != null)
+            OrderBy = s[Integer.parseInt(req.getParameter("order[column]"))] + " " + req.getParameter("order[dir]");
+
+        PageHelper.startPage(pageIndex, pageSize,OrderBy);
+        List<DigitalFoundation> dfList = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(), target.trim());
+        PageInfo<DigitalFoundation> page = new PageInfo<>(dfList);
+        //返回DataTable使用
+        RtPageInfo pageInfo = new RtPageInfo();
+        pageInfo.setData(page.getList());//这里是数据内容 List
+        pageInfo.setPageNum(startIndex / pageSize);//Integer
+        pageInfo.setPageSize(pageSize);//pageSize
+        pageInfo.setTotalCount(page.getTotal());//BigInteger
+
+        return pageInfo;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/xml", method = RequestMethod.GET)
+    public String createXml(){
+        String xmlString = "";
+        return xmlString;
     }
 }

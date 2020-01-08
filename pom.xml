@@ -111,6 +111,12 @@
 	    <artifactId>postgresql</artifactId>
 	    <scope>runtime</scope>
 		</dependency>
+		<!-- gexf4j -->
+		<dependency>
+			<groupId>it.uniroma1.dis.wsngroup.gexf4j</groupId>
+			<artifactId>gexf4j</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		
 	</dependencies>
 

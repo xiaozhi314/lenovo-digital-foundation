@@ -7,21 +7,13 @@
 <body>
 <div id="wrapper">
     <nav th:include="nav.html"></nav>
-    <h1 class="page-header">Interface</h1>
+    <h1 class="page-header">Digital Foundation</h1>
     <input type="text" name="queryInput" id="queryInput" placeholder="搜索" style="width:250px" class="input-text">
     <!-- form -->
     <div class="row clearfix">
         <div class="col-md-12 column">
             <p><span>Source System Name:&nbsp;&nbsp;</span><input type="text" id="source"/>&nbsp;
                 <span>Target System Name:&nbsp;&nbsp;</span><input type="text" id="target"/></p>
-            <p><span>Integration Platform&nbsp;&nbsp;</span><select
-                    id="platform">
-                <option value=""></option>
-                <option value="PO">PO</option>
-                <option value="Talend">Talend</option>
-                <option value="DS">DS</option>
-                <option value="WSO2">WSO2</option>
-            </select></p>
             &nbsp;<button type="button" class="btn btn-default btn-primary" onclick="search()">Search</button>
         </div>
     </div>
@@ -32,34 +24,21 @@
             <tr>
                 <th>Interface id</th>
                 <th>Interface Name</th>
-                <th>Integration Platform</th>
-                <th>Source System Name</th>
                 <th>Source Interface</th>
                 <th>Source Interface Type</th>
-                <th>Source Technical Interface</th>
-                <th>Source Channel</th>
-                <th>Target System Name</th>
+                <th>Source System</th>
                 <th>Target Interface</th>
                 <th>Target Interface Type</th>
-                <th>Target Technical Interface</th>
-                <th>Target Channel</th>
-                <th>Mapping Name</th>
-                <th>Last Modified By</th>
-                <th>Last Modifyied Date</th>
-                <th>Receiver Condition</th>
-                <th>Mapping Condition</th>
+                <th>Target System</th>
             </tr>
             </thead>
         </table>
     </div>
-    <div id="channelDetailDiv" style="display: none;">
-        <h2>Detail Information</h2>
-        <pre class='hljs'><code><p id="payload"></p></code></pre>
-    </div>
+
 </div>
 <!-- /#wrapper -->
 <script>
-    document.title = 'Interface';
+    document.title = 'Digital Fundation';
 
     $(function () {
         //初始化表格
@@ -87,13 +66,12 @@
                 param.order = data.order[0];
                 param.source = $("#source").val();
                 param.target = $("#target").val();
-                param.platform = $("#platform").val();
 
                 console.log(param);
                 //ajax请求数据
                 $.ajax({
                     type: "GET",
-                    url: "/portal/query",
+                    url: "/portal/dfquery",
                     cache: false,  //禁用缓存
                     data: param,  //传入组装的参数
                     dataType: "json",
@@ -115,86 +93,24 @@
             columns: [
                 {"data": "interface_id"},
                 {"data": "interface_name"},
-                {"data": "integration_platform"},
-                {"data": "source_system_name"},
                 {"data": "source_interface"},
                 {"data": "source_interface_type"},
-                {"data": "source_technical_interface"},
-                {"data": "source_channel"},
-                {"data": "target_system_name"},
+                {"data": "source_system"},
                 {"data": "target_interface"},
                 {"data": "target_interface_type"},
-                {"data": "target_technical_interface"},
-                {"data": "target_channel"},
-                {"data": "mapping_name"},
-                {"data": "last_modified_by"},
-                {"data": "last_modifyied_date"},
-                {"data": "receiver_condition"},
-                {"data": "source_channel_detail"}
-            ],
-            "columnDefs": [
-                {
-                    "targets": [7],
-                    render: function (data, type, row) {
-                        if (data) {
-                            var source = escape(row.source_channel_detail);
-                            return "<a href='javascript:void(0);'onclick='show(\"" + source + "\")'>" + data + "</a>"
-                        } else {
-                            return "";
-                        }
-                    }
-                },
-                {
-                    "targets": [12],
-                    render: function (data, type, row) {
-                        if (data) {
-                            var target = escape(row.target_channel_detail);
-                            return "<a href='javascript:void(0);'onclick='show(\"" + target + "\")'>" + data + "</a>"
-                        } else {
-                            return "";
-                        }
-                    }
-                },
-                {
-                    "targets": [16, 17],
-                    render: function (data, type, row) {
-                        if (data) {
-                            data = escape(data);
-                            return "<a href='javascript:void(0);'onclick='show(\"" + data + "\")'>With Condition</a>"
-                        } else {
-                            return "";
-                        }
-                    }
-                },
+                {"data": "target_system"},
             ],
         }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
-
         //input refresh table
         $("#queryInput").on("input", function () {
             table.ajax.reload();
         });
     });
-
     //search button function
     function search() {
         $("#table").dataTable().fnDraw();
     }
 
-    //show code render
-    function show(s) {
-        s = unescape(s);
-        s = s.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-        $("#payload").html("");
-        $("#payload").append(s);
-        hljs.initHighlighting.called = false;
-        hljs.initHighlighting();
-        $("#channelDetailDiv").show();
-    }
-
-    //replaceAll function define
-    String.prototype.replaceAll = function (s1, s2) {
-        return this.replace(new RegExp(s1, "gm"), s2);
-    }
 </script>
 
 </body>
