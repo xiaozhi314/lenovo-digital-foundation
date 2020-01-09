@@ -16,10 +16,6 @@ import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeType;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.GexfImpl;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.StaxGraphWriter;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.data.AttributeListImpl;
-import it.uniroma1.dis.wsngroup.gexf4j.core.impl.viz.ColorImpl;
-import it.uniroma1.dis.wsngroup.gexf4j.core.impl.viz.PositionImpl;
-import it.uniroma1.dis.wsngroup.gexf4j.core.viz.Color;
-import it.uniroma1.dis.wsngroup.gexf4j.core.viz.Position;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 
 @Controller
@@ -41,7 +36,6 @@ public class PortalController {
     private InterfacesMapper interfacesMapper;
     @Resource
     private DigitalFoundationMapper digitalfoundationMapper;
-
 
     @RequestMapping("/index")
     public String index() {
@@ -115,12 +109,33 @@ public class PortalController {
         pageInfo.setPageSize(pageSize);//pageSize
         pageInfo.setTotalCount(page.getTotal());//BigInteger
 
-        generateGexf();
-        System.out.println("GEXF generated");
+//        generateGexf(dfList);
         return pageInfo;
     }
 
-    public void generateGexf(){
+    public void generateGexf(List<DigitalFoundation> df){
+        Map<String,Integer> map = new HashMap<>();
+        Iterator iter = map.entrySet().iterator();
+        for(int i=0;i<df.size();i++){
+            DigitalFoundation row = df.get(i);
+            if(map.get(row.getSource_system())!=null)
+                map.put(row.getSource_system(),1);
+            else
+                map.put(row.getSource_system(),map.get(row.getSource_system())+1);
+            if(map.get(row.getTarget_system())!=null)
+                map.put(row.getTarget_system(),1);
+            else
+                map.put(row.getTarget_system(),map.get(row.getTarget_system())+1);
+            if(map.get(row.getSource_interface())!=null)
+                map.put(row.getSource_interface(),1);
+            else
+                map.put(row.getSource_interface(),map.get(row.getSource_interface())+1);
+            if(map.get(row.getTarget_interface())!=null)
+                map.put(row.getTarget_interface(),1);
+            else
+                map.put(row.getTarget_interface(),map.get(row.getTarget_interface())+1);
+        }
+
         Gexf gexf = new GexfImpl();
         Calendar date = Calendar.getInstance();
         gexf.getMetadata()
@@ -134,43 +149,53 @@ public class PortalController {
 
         AttributeList attrList = new AttributeListImpl(AttributeClass.NODE);
         graph.getAttributeLists().add(attrList);
-
         Attribute attUrl = attrList.createAttribute("modularity_class", AttributeType.INTEGER, "Modularity Class");
-        Node sys1 = graph.createNode("0");
-        sys1
-                .setLabel("ECC")
-                .getAttributeValues()
-                .addValue(attUrl, "3");
-        Color color1 = new ColorImpl();
-        color1.setR(235);
-        color1.setG(81);
-        color1.setB(72);
-        Position position1 = new PositionImpl();
-        position1.setX(266);
-        position1.setY(300);
-        position1.setZ(0);
-        sys1.setColor(color1);
-        sys1.setSize(30);
-        sys1.setPosition(position1);
 
-        Node sys2 = graph.createNode("1");
-        sys2
-                .setLabel("LUDP")
-                .getAttributeValues()
-                .addValue(attUrl, "3");
-        Color color2 = new ColorImpl();
-        color2.setR(100);
-        color2.setG(81);
-        color2.setB(72);
-        Position position2 = new PositionImpl();
-        position2.setX(189);
-        position2.setY(-346);
-        position2.setZ(0);
-        sys2.setColor(color2);
-        sys2.setSize(20);
-        sys2.setPosition(position2);
+        for(int i = 0;i<map.size();i++){
+            Node[] node = new Node[map.size()];
+            node[i] = graph.createNode(String.valueOf(i));
+            Map.Entry entry = (Map.Entry) iter.next();
+            node[i]
+                    .setLabel((String)entry.getKey())
+                    .getAttributeValues()
+                    .addValue(attUrl,"3");
 
-        sys1.connectTo("0", sys2).setWeight(0.8f);
+        }
+//        Node sys1 = graph.createNode("0");
+//        sys1
+//                .setLabel("ECC")
+//                .getAttributeValues()
+//                .addValue(attUrl, "3");
+//        Color color1 = new ColorImpl();
+//        color1.setR(235);
+//        color1.setG(81);
+//        color1.setB(72);
+//        Position position1 = new PositionImpl();
+//        position1.setX(266);
+//        position1.setY(300);
+//        position1.setZ(0);
+//        sys1.setColor(color1);
+//        sys1.setSize(30);
+//        sys1.setPosition(position1);
+//
+//        Node sys2 = graph.createNode("1");
+//        sys2
+//                .setLabel("LUDP")
+//                .getAttributeValues()
+//                .addValue(attUrl, "3");
+//        Color color2 = new ColorImpl();
+//        color2.setR(100);
+//        color2.setG(81);
+//        color2.setB(72);
+//        Position position2 = new PositionImpl();
+//        position2.setX(189);
+//        position2.setY(-346);
+//        position2.setZ(0);
+//        sys2.setColor(color2);
+//        sys2.setSize(20);
+//        sys2.setPosition(position2);
+//
+//        sys1.connectTo("0", sys2).setWeight(0.8f);
 
         StaxGraphWriter graphWriter = new StaxGraphWriter();
 
