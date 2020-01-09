@@ -17,7 +17,7 @@ document.title = 'Portal';
 var myChart = echarts.init(document.getElementById('main'));
 
 myChart.showLoading();
-$.get('data', function (xml) {
+$.get('../data/les-miserables.gexf', function (xml) {
     myChart.hideLoading();
     console.log("loading successful");
     var graph = echarts.dataTool.gexf.parse(xml);
