@@ -16,6 +16,10 @@ import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeType;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.GexfImpl;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.StaxGraphWriter;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.data.AttributeListImpl;
+import it.uniroma1.dis.wsngroup.gexf4j.core.impl.viz.ColorImpl;
+import it.uniroma1.dis.wsngroup.gexf4j.core.impl.viz.PositionImpl;
+import it.uniroma1.dis.wsngroup.gexf4j.core.viz.Color;
+import it.uniroma1.dis.wsngroup.gexf4j.core.viz.Position;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +53,7 @@ public class PortalController {
 
     @RequestMapping("/df")
     public String getDf() {
+        generateGexf();
         return "df";
     }
 
@@ -101,6 +106,7 @@ public class PortalController {
 
         PageHelper.startPage(pageIndex, pageSize,OrderBy);
         List<DigitalFoundation> dfList = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(), target.trim());
+        System.out.println("dflistSOUT: " + dfList);
         PageInfo<DigitalFoundation> page = new PageInfo<>(dfList);
         //返回DataTable使用
         RtPageInfo pageInfo = new RtPageInfo();
@@ -109,31 +115,36 @@ public class PortalController {
         pageInfo.setPageSize(pageSize);//pageSize
         pageInfo.setTotalCount(page.getTotal());//BigInteger
 
-//        generateGexf(dfList);
+
+
         return pageInfo;
     }
 
-    public void generateGexf(List<DigitalFoundation> df){
-        Map<String,Integer> map = new HashMap<>();
-        Iterator iter = map.entrySet().iterator();
-        for(int i=0;i<df.size();i++){
-            DigitalFoundation row = df.get(i);
-            if(map.get(row.getSource_system())!=null)
+    public void generateGexf(){
+        List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery("","","");
+        System.out.println("echart行数共有:" + echartDF.size());
+        Map<String, Integer> map = new HashMap<>();
+//        Iterator iter = map.entrySet().iterator();
+        for(int i=0;i<echartDF.size();i++){
+
+            DigitalFoundation row = echartDF.get(i);
+            //System.out.println(map.get(row.getSource_system()));
+            if(map.get(row.getSource_system())==null)
                 map.put(row.getSource_system(),1);
             else
-                map.put(row.getSource_system(),map.get(row.getSource_system())+1);
-            if(map.get(row.getTarget_system())!=null)
+                map.put(row.getSource_system(), map.get(row.getSource_system())+1);
+            if(map.get(row.getTarget_system())==null)
                 map.put(row.getTarget_system(),1);
             else
-                map.put(row.getTarget_system(),map.get(row.getTarget_system())+1);
-            if(map.get(row.getSource_interface())!=null)
-                map.put(row.getSource_interface(),1);
-            else
-                map.put(row.getSource_interface(),map.get(row.getSource_interface())+1);
-            if(map.get(row.getTarget_interface())!=null)
-                map.put(row.getTarget_interface(),1);
-            else
-                map.put(row.getTarget_interface(),map.get(row.getTarget_interface())+1);
+                map.put(row.getTarget_system(), map.get(row.getTarget_system())+1);
+//            if(map.get(row.getSource_interface())==null)
+//                map.put(row.getSource_interface(),1);
+//            else
+//                map.put(row.getSource_interface(),map.get(row.getSource_interface())+1);
+//            if(map.get(row.getTarget_interface())==null)
+//                map.put(row.getTarget_interface(),1);
+//            else
+//                map.put(row.getTarget_interface(),map.get(row.getTarget_interface())+1);
         }
 
         Gexf gexf = new GexfImpl();
@@ -151,16 +162,114 @@ public class PortalController {
         graph.getAttributeLists().add(attrList);
         Attribute attUrl = attrList.createAttribute("modularity_class", AttributeType.INTEGER, "Modularity Class");
 
+        Iterator iter = map.entrySet().iterator();
+        Map<Integer, Node> nodeID = new HashMap();//存Node和ID
+        Map<Integer, String > nodeName = new HashMap();//存Node名字和ID
+
+
         for(int i = 0;i<map.size();i++){
             Node[] node = new Node[map.size()];
             node[i] = graph.createNode(String.valueOf(i));
+            if(i==map.size()-1){
+                    System.out.println("节点个数共有:"+ i);
+            }
             Map.Entry entry = (Map.Entry) iter.next();
             node[i]
                     .setLabel((String)entry.getKey())
                     .getAttributeValues()
-                    .addValue(attUrl,"3");
+                    .addValue(attUrl,"1");
+            Color color = new ColorImpl();
+            Random r = new Random();
+            color.setR(r.nextInt(255));
+            color.setG(r.nextInt(255));
+            color.setB(r.nextInt(255));
+            Position position = new PositionImpl();
+            position.setX(r.nextInt(3500));
+            position.setY(r.nextInt(1300));
+            position.setZ(0);
+            node[i].setColor(color);
+            node[i].setSize( (float) Math.sqrt(map.get((String) entry.getKey()))+7);
+//            node[i].setSize(map.get((String) entry.getKey()));
 
+            if ("LUDP".equals(entry.getKey())){
+                System.out.println("LUDP "+entry.getKey());
+                Position positionLUDP = new PositionImpl();
+                positionLUDP.setX(450);
+                positionLUDP.setY(250);
+                positionLUDP.setZ(0);
+                node[i].setPosition(positionLUDP);
+            }else{
+                node[i].setPosition(position);
+            }
+            nodeID.put(i,node[i]);
+            //System.out.println("nodeID: " + nodeID.get(i));
+            nodeName.put(i, (String)entry.getKey());
+            //System.out.println("nodeNAME: " + nodeName.get(i));
         }
+
+
+        //Talend的节点，平台节点需不需要？
+//        Node nodeTalend = graph.createNode(String.valueOf(map.size()));
+//        nodeTalend
+//                .setLabel("Talend")
+//                .getAttributeValues()
+//                .addValue(attUrl,"1");
+//        nodeTalend.setColor(new ColorImpl(255,255,255));
+//        nodeTalend.setSize(50);
+//        nodeTalend.setPosition(new PositionImpl(700,250,0));
+        int counterLines = 0;
+        for (int i = 0; i < nodeID.size(); i++) {
+            for (int j = 0; j < echartDF.size(); j++) {
+                DigitalFoundation row = echartDF.get(j);
+                if (row.getSource_system().equals(nodeName.get(i))) {
+                    for (int k = 0; k < nodeID.size(); k++) {
+                        if(nodeName.get(k).equals(row.getTarget_system())){
+                            try {
+                                //nodeID.get(k).connectTo(String.valueOf(i), nodeID.get(i)).setWeight(0.8f);
+                                //target connect to source
+                                counterLines++;
+                                nodeID.get(i).connectTo(String.valueOf(k), nodeID.get(k)).setThickness(0.3f);
+                                //source connect to target
+//                                nodeID.get(i).connectTo(String.valueOf(map.size()), nodeTalend).setWeight(0.8f).setThickness(0.5f);
+//                                nodeTalend.connectTo(String.valueOf(k), nodeID.get(k)).setThickness(4f);
+                            } catch (IllegalArgumentException e) {
+                                //System.out.println(e);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("counterLines: "+ counterLines);
+
+
+
+
+        //写Gexf文件
+        StaxGraphWriter graphWriter = new StaxGraphWriter();
+        try {
+            String uploadDir = ResourceUtils.getURL("classpath:").getPath()+"/static/data/";
+            File gexfFile = new File(uploadDir+"demo.gexf");
+            Writer out;
+            out =  new FileWriter(gexfFile, false);
+            graphWriter.writeToStream(gexf, out, "UTF-8");
+            System.out.println(gexfFile.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 //        Node sys1 = graph.createNode("0");
 //        sys1
 //                .setLabel("ECC")
@@ -196,20 +305,3 @@ public class PortalController {
 //        sys2.setPosition(position2);
 //
 //        sys1.connectTo("0", sys2).setWeight(0.8f);
-
-        StaxGraphWriter graphWriter = new StaxGraphWriter();
-
-        try {
-            String uploadDir= ResourceUtils.getURL("classpath:").getPath()+"/static/data/";
-            File f = new File(uploadDir+"demo.gexf");
-            Writer out;
-            out =  new FileWriter(f, false);
-            graphWriter.writeToStream(gexf, out, "UTF-8");
-            System.out.println(f.getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}

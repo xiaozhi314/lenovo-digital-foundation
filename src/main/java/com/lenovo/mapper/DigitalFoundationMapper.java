@@ -26,7 +26,8 @@ public interface DigitalFoundationMapper {
             if (s != "") {
                 sql += " AND interface_name LIKE '%" + s + "%' OR interface_name LIKE '%" + s + "%' OR "
                         + "source_interface LIKE '%" + s + "%' OR source_interface_type LIKE '%" + s + "%' OR source_system LIKE '%" + s + "%'"
-                        + "OR target_interface LIKE '%" + s + "%' OR target_interface_type LIKE '%" + s + "%' OR target_system LIKE '%" + s + "%' ";
+                        + "OR target_interface LIKE '%" + s + "%' OR target_interface_type LIKE '%" + s + "%' OR target_system LIKE '%" + s + "%' "
+                        + "OR integration_platform LIKE '%" + s + "%'";
             }
 
             return sql;

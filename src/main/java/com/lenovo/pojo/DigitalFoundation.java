@@ -9,6 +9,15 @@ public class DigitalFoundation {
     private String target_interface;
     private String target_interface_type;
     private String target_system;
+    private String integration_platform;
+
+    public String getIntegration_platform() {
+        return integration_platform;
+    }
+
+    public void setIntegration_platform(String integration_platform) {
+        this.integration_platform = integration_platform;
+    }
 
     public String getInterface_id() {
         return interface_id;
