@@ -124,11 +124,9 @@ public class PortalController {
         List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery("","","");
         System.out.println("echart行数共有:" + echartDF.size());
         Map<String, Integer> map = new HashMap<>();
-//        Iterator iter = map.entrySet().iterator();
         for(int i=0;i<echartDF.size();i++){
-
             DigitalFoundation row = echartDF.get(i);
-            //System.out.println(map.get(row.getSource_system()));
+
             if(map.get(row.getSource_system())==null)
                 map.put(row.getSource_system(),1);
             else
@@ -137,14 +135,6 @@ public class PortalController {
                 map.put(row.getTarget_system(),1);
             else
                 map.put(row.getTarget_system(), map.get(row.getTarget_system())+1);
-//            if(map.get(row.getSource_interface())==null)
-//                map.put(row.getSource_interface(),1);
-//            else
-//                map.put(row.getSource_interface(),map.get(row.getSource_interface())+1);
-//            if(map.get(row.getTarget_interface())==null)
-//                map.put(row.getTarget_interface(),1);
-//            else
-//                map.put(row.getTarget_interface(),map.get(row.getTarget_interface())+1);
         }
 
         Gexf gexf = new GexfImpl();
@@ -165,7 +155,6 @@ public class PortalController {
         Iterator iter = map.entrySet().iterator();
         Map<Integer, Node> nodeID = new HashMap();//存Node和ID
         Map<Integer, String > nodeName = new HashMap();//存Node名字和ID
-
 
         for(int i = 0;i<map.size();i++){
             Node[] node = new Node[map.size()];
@@ -202,9 +191,7 @@ public class PortalController {
                 node[i].setPosition(position);
             }
             nodeID.put(i,node[i]);
-            //System.out.println("nodeID: " + nodeID.get(i));
             nodeName.put(i, (String)entry.getKey());
-            //System.out.println("nodeNAME: " + nodeName.get(i));
         }
 
 
@@ -243,8 +230,6 @@ public class PortalController {
         System.out.println("counterLines: "+ counterLines);
 
 
-
-
         //写Gexf文件
         StaxGraphWriter graphWriter = new StaxGraphWriter();
         try {
@@ -261,9 +246,6 @@ public class PortalController {
         }
     }
 }
-
-
-
 
 
 
