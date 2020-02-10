@@ -53,7 +53,6 @@ public class PortalController {
 
     @RequestMapping("/df")
     public String getDf() {
-        generateGexf();
         return "df";
     }
 
@@ -115,13 +114,12 @@ public class PortalController {
         pageInfo.setPageSize(pageSize);//pageSize
         pageInfo.setTotalCount(page.getTotal());//BigInteger
 
-
-
+        generateGexf(query,source,target);
         return pageInfo;
     }
 
-    public void generateGexf(){
-        List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery("","","");
+    public void generateGexf(String query,String source,String target){
+        List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(),target.trim());
         System.out.println("echart行数共有:" + echartDF.size());
         Map<String, Integer> map = new HashMap<>();
         for(int i=0;i<echartDF.size();i++){
@@ -228,8 +226,6 @@ public class PortalController {
             }
         }
         System.out.println("counterLines: "+ counterLines);
-
-
         //写Gexf文件
         StaxGraphWriter graphWriter = new StaxGraphWriter();
         try {
