@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 
@@ -94,17 +95,17 @@ public class PortalController {
             @RequestParam(required = false, name = "pageSize") Integer pageSize,
             @RequestParam(required = false, name = "startIndex") Integer startIndex,
             @RequestParam(required = false, name = "pageIndex") Integer pageIndex,
-            String query, String source, String target,
+            String query, String source, String target, String scenario,
             HttpServletRequest req) {
         String[] s = {"interface_id", "interface_name", "source_interface", "source_interface_type", "source_system", "target_interface",
-                "target_interface_type", "target_system"};
+                "target_interface_type", "target_system","integration_platform","scenario_name","remark"};
 
         String OrderBy = "interface_id asc";
         if (req.getParameter("order[column]") != null && req.getParameter("order[dir]") != null)
             OrderBy = s[Integer.parseInt(req.getParameter("order[column]"))] + " " + req.getParameter("order[dir]");
 
         PageHelper.startPage(pageIndex, pageSize,OrderBy);
-        List<DigitalFoundation> dfList = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(), target.trim());
+        List<DigitalFoundation> dfList = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(), target.trim(),scenario.trim());
         System.out.println("dflistSOUT: " + dfList);
         PageInfo<DigitalFoundation> page = new PageInfo<>(dfList);
         //返回DataTable使用
@@ -114,12 +115,12 @@ public class PortalController {
         pageInfo.setPageSize(pageSize);//pageSize
         pageInfo.setTotalCount(page.getTotal());//BigInteger
 
-        generateGexf(query,source,target);
+        generateGexf(query,source,target,scenario);
         return pageInfo;
     }
 
-    public void generateGexf(String query,String source,String target){
-        List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(),target.trim());
+    public void generateGexf(String query,String source,String target,String scenario){
+        List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(),target.trim(),scenario.trim());
         System.out.println("echart行数共有:" + echartDF.size());
         Map<String, Integer> map = new HashMap<>();
         for(int i=0;i<echartDF.size();i++){
@@ -241,45 +242,12 @@ public class PortalController {
             e.printStackTrace();
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryScenario", method = RequestMethod.POST)
+    public List<String> selectPOST(HttpServletRequest request, HttpServletResponse response){
+        List<String> scenario = digitalfoundationMapper.FindSNByQuery();
+        scenario.add(0,"");
+        return scenario;
+    }
 }
-
-
-
-
-
-
-//        Node sys1 = graph.createNode("0");
-//        sys1
-//                .setLabel("ECC")
-//                .getAttributeValues()
-//                .addValue(attUrl, "3");
-//        Color color1 = new ColorImpl();
-//        color1.setR(235);
-//        color1.setG(81);
-//        color1.setB(72);
-//        Position position1 = new PositionImpl();
-//        position1.setX(266);
-//        position1.setY(300);
-//        position1.setZ(0);
-//        sys1.setColor(color1);
-//        sys1.setSize(30);
-//        sys1.setPosition(position1);
-//
-//        Node sys2 = graph.createNode("1");
-//        sys2
-//                .setLabel("LUDP")
-//                .getAttributeValues()
-//                .addValue(attUrl, "3");
-//        Color color2 = new ColorImpl();
-//        color2.setR(100);
-//        color2.setG(81);
-//        color2.setB(72);
-//        Position position2 = new PositionImpl();
-//        position2.setX(189);
-//        position2.setY(-346);
-//        position2.setZ(0);
-//        sys2.setColor(color2);
-//        sys2.setSize(20);
-//        sys2.setPosition(position2);
-//
-//        sys1.connectTo("0", sys2).setWeight(0.8f);

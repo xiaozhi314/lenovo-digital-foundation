@@ -13,8 +13,11 @@
     <!-- form -->
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <p><span>Source System Name:&nbsp;&nbsp;</span><input type="text" id="source"/>&nbsp;
-                <span>Target System Name:&nbsp;&nbsp;</span><input type="text" id="target"/></p>
+            <p><span>Source System Name: </span><input type="text" id="source"/>&nbsp;
+                <span>Target System Name: </span><input type="text" id="target"/></p>
+            <p><span>Scenario Name&nbsp;&nbsp;</span>
+                <select id="scenario"></select>
+            </p>
             &nbsp;<button type="button" class="btn btn-default btn-primary" onclick="search()">Search</button>
         </div>
     </div>
@@ -33,6 +36,8 @@
                 <th>Target Interface Type</th>
                 <th>Target System</th>
                 <th>Integration Platform</th>
+                <th>Scenario Name</th>
+                <th>Remark</th>
             </tr>
             </thead>
         </table>
@@ -69,6 +74,7 @@
                 param.order = data.order[0];
                 param.source = $("#source").val();
                 param.target = $("#target").val();
+                param.scenario = $("#scenario").val();
 
                 console.log(param);
                 //ajax请求数据
@@ -102,7 +108,9 @@
                 {"data": "target_interface"},
                 {"data": "target_interface_type"},
                 {"data": "target_system"},
-                {"data": "integration_platform"}
+                {"data": "integration_platform"},
+                {"data": "scenario_name"},
+                {"data": "remark"}
             ],
         }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
 
@@ -118,77 +126,100 @@
     }
 
     // 基于准备好的dom，初始化echarts实例
-    var myChart = echarts.init(document.getElementById('main'));
-    myChart.showLoading();
-    $.get('../data/demo.gexf', function (xml) {
-        myChart.hideLoading();
-        console.log("loading successful");
-        var graph = echarts.dataTool.gexf.parse(xml);
-        var categories = [];
-        for (var i = 0; i < 5; i++) {
-            categories[i] = {
-                name: 'Category ' + i
-            };
-        }
-        graph.nodes.forEach(function (node) {
-            node.itemStyle = null;
-            node.value = node.symbolSize;
-            node.symbolSize /= 1.5;
-            node.label = {
-                show: node.symbolSize > 30
-            };
-            node.category = node.attributes.modularity_class;
-        });
-        myChart.on('click', function (node) {
-            document.getElementById('queryInput').value="system="+node.name;
-            $("#table").dataTable().fnDraw();
-           // myChart.setOption(option,true);
-        });
-        option = {
-            tooltip: {},
-            legend: [{
-                // selectedMode: 'single',
-                data: categories.map(function (a) {
-                    return a.name;
-                })
-            }],
-            animationDuration: 1500,
-            animationEasingUpdate: 'quinticInOut',
-            series : [
-                {
-                    name: '',
-                    type: 'graph',
-                    layout: 'none',
-                    data: graph.nodes,
-                    links: graph.links,
-                    categories: categories,
-                    roam: true,
-                    focusNodeAdjacency: true,
-                    itemStyle: {
-                        borderColor: '#fff',
-                        borderWidth: 1,
-                        shadowBlur: 10,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)'
-                    },
-                    label: {
-                        position: 'right',
-                        formatter: '{b}'
-                    },
-                    lineStyle: {
-                        color: 'source',
-                        curveness: 0.3
-                    },
-                    emphasis: {
+    function createMap() {
+        $("#main").removeAttr("_echarts_instance_").empty();
+        var myChart = echarts.init(document.getElementById('main'));
+        myChart.showLoading();
+        $.get('../data/demo.gexf', function (xml) {
+            myChart.hideLoading();
+            console.log("loading successful");
+            var graph = echarts.dataTool.gexf.parse(xml);
+            var categories = [];
+            for (var i = 0; i < 5; i++) {
+                categories[i] = {
+                    name: 'Category ' + i
+                };
+            }
+            graph.nodes.forEach(function (node) {
+                node.itemStyle = null;
+                node.value = node.symbolSize;
+                node.symbolSize /= 1.5;
+                node.label = {
+                    show: node.symbolSize > 30
+                };
+                node.category = node.attributes.modularity_class;
+            });
+            myChart.on('click', function (node) {
+                document.getElementById('queryInput').value = "system=" + node.name;
+                $("#table").dataTable().fnDraw();
+                // myChart.setOption(option, true);
+                myChart.clear();
+                createMap();
+            });
+            option = {
+                tooltip: {},
+                legend: [{
+                    // selectedMode: 'single',
+                    data: categories.map(function (a) {
+                        return a.name;
+                    })
+                }],
+                animationDuration: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series: [
+                    {
+                        name: '',
+                        type: 'graph',
+                        layout: 'none',
+                        data: graph.nodes,
+                        links: graph.links,
+                        categories: categories,
+                        roam: true,
+                        focusNodeAdjacency: true,
+                        itemStyle: {
+                            borderColor: '#fff',
+                            borderWidth: 1,
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.3)'
+                        },
+                        label: {
+                            position: 'right',
+                            formatter: '{b}'
+                        },
                         lineStyle: {
-                            width: 10
+                            color: 'source',
+                            curveness: 0.3
+                        },
+                        emphasis: {
+                            lineStyle: {
+                                width: 10
+                            }
                         }
                     }
-                }
-            ]
-        };
-        myChart.setOption(option);
-    }, 'xml');
+                ]
+            };
+            myChart.setOption(option);
+        }, 'xml');
+    }
+    $(function(){
+        createMap();
+    })
 
+    $(document).ready(function(){
+        $.ajax({
+            contentType : "application/json;charset=utf-8",
+            type : "POST",
+            url : "queryScenario",
+            dataType : "json",
+            success : function(data) {
+                $.each(data, function(i, scenario) {
+                    $('#scenario').append(
+                        $('<option>').text(scenario).attr('value',
+                            scenario));
+                });
+            }
+        });
+    });
 </script>
 
 </body>

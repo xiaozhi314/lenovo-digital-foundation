@@ -10,6 +10,24 @@ public class DigitalFoundation {
     private String target_interface_type;
     private String target_system;
     private String integration_platform;
+    private String scenario_name;
+    private String remark;
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getScenario_name() {
+        return scenario_name;
+    }
+
+    public void setScenario_name(String scenario_name) {
+        this.scenario_name = scenario_name;
+    }
 
     public String getIntegration_platform() {
         return integration_platform;
