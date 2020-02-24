@@ -152,10 +152,10 @@
             myChart.on('click', function (node) {
                 document.getElementById('queryInput').value = "system=" + node.name;
                 $("#table").dataTable().fnDraw();
-                // myChart.setOption(option, true);
                 myChart.clear();
-                createMap();
+                setTimeout("createMap()",3000);
             });
+
             option = {
                 tooltip: {},
                 legend: [{
