@@ -125,7 +125,6 @@ public class PortalController {
         Map<String, Integer> map = new HashMap<>();
         for(int i=0;i<echartDF.size();i++){
             DigitalFoundation row = echartDF.get(i);
-
             if(map.get(row.getSource_system())==null)
                 map.put(row.getSource_system(),1);
             else
@@ -192,7 +191,6 @@ public class PortalController {
             nodeID.put(i,node[i]);
             nodeName.put(i, (String)entry.getKey());
         }
-
 
         //Talend的节点，平台节点需不需要？
 //        Node nodeTalend = graph.createNode(String.valueOf(map.size()));
