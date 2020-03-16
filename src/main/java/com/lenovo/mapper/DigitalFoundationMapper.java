@@ -17,6 +17,9 @@ public interface DigitalFoundationMapper {
     @SelectProvider(type = DfDaoProvider.class, method = "findSNByQuery")
     List<String> FindSNByQuery();
 
+    @SelectProvider(type = DfDaoProvider.class, method = "findSystemByQuery")
+    List<String> FindSystemByQuery();
+
     class DfDaoProvider {
         public String findDfByQuery(String s,String source, String target, String scenario) {
             String sql = "select * from public.v_interface_scenario Where 1=1";
@@ -45,6 +48,10 @@ public interface DigitalFoundationMapper {
         }
         public String findSNByQuery(){
             String sql = "select scenario_name from busness_scenario";
+            return sql;
+        }
+        public String findSystemByQuery(){
+            String sql = "select system_name from system";
             return sql;
         }
     }

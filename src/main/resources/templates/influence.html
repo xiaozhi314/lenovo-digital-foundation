@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/header">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body>
+<div id="wrapper">
+    <nav th:include="nav.html"></nav>
+    <h1 class="page-header">Influence</h1>
+    <!-- form -->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <p><span>System Name 1: </span><input type="text" id="system1" list="system_list">
+                <span>System Name 2: </span><input type="text" id="system2" list="system_list">
+                <datalist id="system_list" style="display:none;"></datalist>
+                <span>Interface Name: </span><input type="text" id="interface"/>
+            </p>
+            &nbsp;<button type="button" class="btn btn-default btn-primary" onclick="search()">Search</button>
+        </div>
+    </div>
+
+    <!-- table -->
+    <div class="table-responsive">
+        <table id="table" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Interface id</th>
+                <th>Interface Name</th>
+                <th>Source Interface</th>
+                <th>Source Interface Type</th>
+                <th>Source System</th>
+                <th>Target Interface</th>
+                <th>Target Interface Type</th>
+                <th>Target System</th>
+                <th>Integration Platform</th>
+                <th>Scenario Name</th>
+                <th>Remark</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+</div>
+<!-- /#wrapper -->
+<script>
+    document.title = 'Influence';
+    $(document).ready(function(){
+        $.ajax({
+            contentType : "application/json;charset=utf-8",
+            type : "POST",
+            url : "querySystem",
+            dataType : "json",
+            success : function(data) {
+                $.each(data, function(i, system) {
+                    $('#system_list').append(
+                        $('<option>').text(system).attr('value',
+                            system));
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+<footer th:include="/footer">
+</footer>
+</html>

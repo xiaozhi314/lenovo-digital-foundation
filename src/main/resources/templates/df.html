@@ -13,8 +13,9 @@
     <!-- form -->
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <p><span>Source System Name: </span><input type="text" id="source"/>&nbsp;
-                <span>Target System Name: </span><input type="text" id="target"/></p>
+            <p><span>Source System Name: </span><input type="text" id="source" list="system_list"/>&nbsp;
+                <span>Target System Name: </span><input type="text" id="target" list="system_list"/>
+                <datalist id="system_list" style="display:none;"></datalist></p>
             <p><span>Scenario Name&nbsp;&nbsp;</span>
                 <select id="scenario"></select>
             </p>
@@ -131,7 +132,7 @@
         $("#main").removeAttr("_echarts_instance_").empty();
         var myChart = echarts.init(document.getElementById('main'));
         myChart.showLoading();
-        $.get('../data/demo.gexf', function (xml) {
+        $.get('/demo.gexf', function (xml) {
             myChart.hideLoading();
             console.log("loading successful");
             var graph = echarts.dataTool.gexf.parse(xml);
@@ -219,6 +220,21 @@
                     $('#scenario').append(
                         $('<option>').text(scenario).attr('value',
                             scenario));
+                });
+            }
+        });
+    });
+    $(document).ready(function(){
+        $.ajax({
+            contentType : "application/json;charset=utf-8",
+            type : "POST",
+            url : "querySystem",
+            dataType : "json",
+            success : function(data) {
+                $.each(data, function(i, system) {
+                    $('#system_list').append(
+                        $('<option>').text(system).attr('value',
+                            system));
                 });
             }
         });

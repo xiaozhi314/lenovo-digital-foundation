@@ -57,6 +57,11 @@ public class PortalController {
         return "df";
     }
 
+    @RequestMapping("/influence")
+    public String getInfluence () {
+        return "influence";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public RtPageInfo query(
@@ -229,7 +234,8 @@ public class PortalController {
         StaxGraphWriter graphWriter = new StaxGraphWriter();
         try {
             String uploadDir = ResourceUtils.getURL("classpath:").getPath()+"/static/data/";
-            File gexfFile = new File(uploadDir+"demo.gexf");
+//            File gexfFile = new File(uploadDir+"demo.gexf");
+            File gexfFile = new File("D://demo.gexf");
             Writer out;
             out =  new FileWriter(gexfFile, false);
             graphWriter.writeToStream(gexf, out, "UTF-8");
@@ -243,9 +249,18 @@ public class PortalController {
 
     @ResponseBody
     @RequestMapping(value = "/queryScenario", method = RequestMethod.POST)
-    public List<String> selectPOST(HttpServletRequest request, HttpServletResponse response){
+    public List<String> selectScenario(HttpServletRequest request, HttpServletResponse response){
         List<String> scenario = digitalfoundationMapper.FindSNByQuery();
         scenario.add(0,"");
         return scenario;
     }
+    @ResponseBody
+    @RequestMapping(value = "/querySystem", method = RequestMethod.POST)
+    public List<String> selectSystem(HttpServletRequest request, HttpServletResponse response){
+        List<String> system = digitalfoundationMapper.FindSystemByQuery();
+        system.add(0,"");
+        return system;
+    }
+
+
 }
