@@ -20,6 +20,9 @@ import it.uniroma1.dis.wsngroup.gexf4j.core.impl.viz.ColorImpl;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.viz.PositionImpl;
 import it.uniroma1.dis.wsngroup.gexf4j.core.viz.Color;
 import it.uniroma1.dis.wsngroup.gexf4j.core.viz.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,16 +34,25 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 
 @Controller
 @RequestMapping("portal")
 public class PortalController {
+    private static final Logger log = LoggerFactory.getLogger(PortalController.class);
     @Resource
     private InterfacesMapper interfacesMapper;
     @Resource
     private DigitalFoundationMapper digitalfoundationMapper;
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+    @Value("${spring.datasource.username}")
+    private String username;
+    @Value("${spring.datasource.password}")
+    private String pw;
+
 
     @RequestMapping("/index")
     public String index() {
@@ -111,7 +123,6 @@ public class PortalController {
 
         PageHelper.startPage(pageIndex, pageSize,OrderBy);
         List<DigitalFoundation> dfList = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(), target.trim(),scenario.trim());
-        System.out.println("dflistSOUT: " + dfList);
         PageInfo<DigitalFoundation> page = new PageInfo<>(dfList);
         //返回DataTable使用
         RtPageInfo pageInfo = new RtPageInfo();
@@ -123,6 +134,111 @@ public class PortalController {
         generateGexf(query,source,target,scenario);
         return pageInfo;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/influencequery", method = RequestMethod.GET)
+    public RtPageInfo influencequery(
+            @RequestParam(required = false, name = "pageSize") Integer pageSize,
+            @RequestParam(required = false, name = "startIndex") Integer startIndex,
+            @RequestParam(required = false, name = "pageIndex") Integer pageIndex,
+            String system_id, String interface_id, HttpServletRequest req) {
+
+        List<DigitalFoundation> fnAffectedList = new ArrayList<>() ;
+        try (Connection conn = DriverManager.getConnection(dbUrl,username,pw);
+             Statement statement = conn.createStatement();
+             CallableStatement proc = conn.prepareCall("{ ? = call fn_affected_by_systemid( ? ) }")) {
+            conn.setAutoCommit(false);
+            // create or replace stored function
+//            proc.execute();
+            //----------------------------------
+            // output
+            proc.registerOutParameter(1, Types.REF_CURSOR);
+            log.warn("LMAO))))System ID: "+system_id);
+            // input
+            proc.setInt(2,204);
+            proc.execute();
+            // Get result
+            ResultSet rs = (ResultSet) proc.getObject(1);
+
+            ResultSetMetaData md = rs.getMetaData();//获取键名
+            int columnCount = md.getColumnCount();//获取行的数量
+            while (rs.next()) {
+
+                for (int i = 1; i <= columnCount/17; i++) {
+                    for(int j=1;j<=17;j++){
+                        DigitalFoundation df = new DigitalFoundation();
+                        df.setInterface_id(rs.getString(j));
+                    }
+                    String columnValue = rs.getString(i);
+
+//                    if("target_interface".equals(md.getColumnName(i))){
+//
+//                        DigitalFoundation DF = new DigitalFoundation();
+//                        DF.setTarget_interface(rs.getObject(i)+"");
+////                        System.out.println(rs.getObject(i)+"");
+//                        fnAffectedList.add(DF);
+//                    }
+//                    if("target_interface".equals(md.getColumnName(i))){
+//                        DigitalFoundation DF = new DigitalFoundation();
+//                        DF.setTarget_interface(rs.getObject(i)+"");
+//                    }
+//                    if("integration_platform".equals(md.getColumnName(i))){
+//                        DigitalFoundation DF = new DigitalFoundation();
+//                        DF.setIntegration_platform(rs.getObject(i)+"");
+//                        fnAffectedList.add(DF);
+//                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+//        CallableStatement proc = null;
+//        try {
+//            sql4StoresProc = "{ ? = call fn_affected_by_systemid("+"337"+") }";
+//            proc = conn.prepareCall(sql4StoresProc);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            proc.execute();
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+////            ResultSet rs = (ResultSet) proc.getObject(1);
+//            ResultSet rs = proc.executeQuery();
+//            while(rs.next()){
+//                String id = rs.getString(1);
+//                System.out.println("id"+id);
+//            }
+//            ResultSetMetaData md = rs.getMetaData();
+//            int columnCount = md.getColumnCount();
+//            System.out.println("columnCount:"+ columnCount);
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+
+        PageHelper.startPage(pageIndex, pageSize);
+//        List<DigitalFoundation> fnAffectedList = digitalfoundationMapper.FnAffectedById(system_id,interface_id);
+        PageInfo<DigitalFoundation> page = new PageInfo<>(fnAffectedList);
+        //返回DataTable使用
+        RtPageInfo pageInfo = new RtPageInfo();
+        pageInfo.setData(page.getList());//这里是数据内容 List
+        pageInfo.setPageNum(startIndex / pageSize);//Integer
+        pageInfo.setPageSize(pageSize);//pageSize
+        pageInfo.setTotalCount(page.getTotal());//BigInteger
+
+        return pageInfo;
+    }
+
 
     public void generateGexf(String query,String source,String target,String scenario){
         List<DigitalFoundation> echartDF = digitalfoundationMapper.FindAllByQuery(query.trim(),source.trim(),target.trim(),scenario.trim());
@@ -254,6 +370,7 @@ public class PortalController {
         scenario.add(0,"");
         return scenario;
     }
+
     @ResponseBody
     @RequestMapping(value = "/querySystem", method = RequestMethod.POST)
     public List<String> selectSystem(HttpServletRequest request, HttpServletResponse response){

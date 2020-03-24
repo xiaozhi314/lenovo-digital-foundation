@@ -3,15 +3,95 @@ package com.lenovo.pojo;
 public class DigitalFoundation {
     private String interface_id;
     private String interface_name;
+    private String s_interface_obj_id;
+    private String t_interface_obj_id;
+    private String f_interface_id;
     private String source_interface;
     private String source_interface_type;
+    private String source_system_id;
     private String source_system;
     private String target_interface;
     private String target_interface_type;
+    private String target_system_id;
     private String target_system;
     private String integration_platform;
+    private String scenario_id;
     private String scenario_name;
     private String remark;
+
+//    public DigitalFoundation(String interface_id, String interface_name, String s_interface_obj_id,
+//                             String t_interface_obj_id, String f_interface_id, String source_interface,
+//                             String source_interface_type, String source_system_id, String source_system,
+//                             String target_interface, String target_interface_type, String target_system_id,
+//                             String target_system, String integration_platform, String scenario_id,
+//                             String scenario_name, String remark) {
+//        this.interface_id = interface_id;
+//        this.interface_name = interface_name;
+//        this.s_interface_obj_id = s_interface_obj_id;
+//        this.t_interface_obj_id = t_interface_obj_id;
+//        this.f_interface_id = f_interface_id;
+//        this.source_interface = source_interface;
+//        this.source_interface_type = source_interface_type;
+//        this.source_system_id = source_system_id;
+//        this.source_system = source_system;
+//        this.target_interface = target_interface;
+//        this.target_interface_type = target_interface_type;
+//        this.target_system_id = target_system_id;
+//        this.target_system = target_system;
+//        this.integration_platform = integration_platform;
+//        this.scenario_id = scenario_id;
+//        this.scenario_name = scenario_name;
+//        this.remark = remark;
+//    }
+
+    public String getS_interface_obj_id() {
+        return s_interface_obj_id;
+    }
+
+    public void setS_interface_obj_id(String s_interface_obj_id) {
+        this.s_interface_obj_id = s_interface_obj_id;
+    }
+
+
+    public String getT_interface_obj_id() {
+        return t_interface_obj_id;
+    }
+
+    public void setT_interface_obj_id(String t_interface_obj_id) {
+        this.t_interface_obj_id = t_interface_obj_id;
+    }
+
+    public String getF_interface_id() {
+        return f_interface_id;
+    }
+
+    public void setF_interface_id(String f_interface_id) {
+        this.f_interface_id = f_interface_id;
+    }
+
+    public String getSource_system_id() {
+        return source_system_id;
+    }
+
+    public void setSource_system_id(String source_system_id) {
+        this.source_system_id = source_system_id;
+    }
+
+    public String getTarget_system_id() {
+        return target_system_id;
+    }
+
+    public void setTarget_system_id(String target_system_id) {
+        this.target_system_id = target_system_id;
+    }
+
+    public String getScenario_id() {
+        return scenario_id;
+    }
+
+    public void setScenario_id(String scenario_id) {
+        this.scenario_id = scenario_id;
+    }
 
     public String getRemark() {
         return remark;

@@ -11,8 +11,7 @@
     <!-- form -->
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <p><span>System Name 1: </span><input type="text" id="system1" list="system_list">
-                <span>System Name 2: </span><input type="text" id="system2" list="system_list">
+            <p><span>System Name 1: </span><input type="text" id="system" list="system_list">
                 <datalist id="system_list" style="display:none;"></datalist>
                 <span>Interface Name: </span><input type="text" id="interface"/>
             </p>
@@ -45,7 +44,78 @@
 <!-- /#wrapper -->
 <script>
     document.title = 'Influence';
-    $(document).ready(function(){
+    $(function () {
+        //初始化表格
+        var table = $("#table").dataTable({
+            //scrollX: 400,   //表格内滑动
+            bLengthChange: false,
+            processing: true,  //隐藏加载提示,自行处理
+            serverSide: true,  //启用服务器端分页
+            searching: false,  //禁用原生搜索
+            orderMulti: true,  //启用多列排序
+            ordering: true,//使用排序
+            bStateSave: false,//记录cookie
+            order: [],  //取消默认排序查询,否则复选框一列会出现小箭头
+            pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
+
+            ajax: function (data, callback, settings) {
+                //封装请求参数
+                console.log(data);
+                var param = {};
+                param.pageSize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
+                param.startIndex = data.start;//开始的记录序号
+                param.pageIndex = (data.start / data.length) + 1;//当前页码
+                param.query = $("input[name='queryInput']").val();//获取查询信息
+                console.log(data.order[0]);
+                param.order = data.order[0];
+                param.system_id = $("#system").val();
+                param.interface_id = $("#interface").val();
+
+                console.log(param);
+                //ajax请求数据
+                $.ajax({
+                    type: "GET",
+                    url: "/portal/influencequery",
+                    cache: false,  //禁用缓存
+                    data: param,  //传入组装的参数
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        //封装返回数据
+                        var returnData = {};
+                        returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                        returnData.recordsTotal = result.totalCount;//返回数据全部记录
+                        returnData.recordsFiltered = result.totalCount;//后台不实现过滤功能，每次查询均视作全部结果
+                        returnData.data = result.data;//返回的数据列表
+                        //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
+                        //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+                        callback(returnData);
+                    }
+                });
+            },
+            //列表表头字段
+            columns: [
+                {"data": "interface_id"},
+                {"data": "interface_name"},
+                {"data": "source_interface"},
+                {"data": "source_interface_type"},
+                {"data": "source_system"},
+                {"data": "target_interface"},
+                {"data": "target_interface_type"},
+                {"data": "target_system"},
+                {"data": "integration_platform"},
+                {"data": "scenario_name"},
+                {"data": "remark"}
+            ],
+        }).api();//此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
+    });
+
+    function search() {
+        $("#table").dataTable().fnDraw();
+        // setTimeout("createMap()",3000);
+    }
+
+        $(document).ready(function(){
         $.ajax({
             contentType : "application/json;charset=utf-8",
             type : "POST",
