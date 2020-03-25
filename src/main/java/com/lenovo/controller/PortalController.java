@@ -153,41 +153,43 @@ public class PortalController {
             //----------------------------------
             // output
             proc.registerOutParameter(1, Types.REF_CURSOR);
-            log.warn("LMAO))))System ID: "+system_id);
             // input
-            proc.setInt(2,204);
+            int sysID = digitalfoundationMapper.findSysIdbySysName(system_id);
+            if (system_id.isEmpty()){
+                sysID = -1;
+            }
+            log.warn("LMAO))))System ID: "+sysID);
+            proc.setInt(2, sysID);
             proc.execute();
             // Get result
             ResultSet rs = (ResultSet) proc.getObject(1);
 
             ResultSetMetaData md = rs.getMetaData();//获取键名
-            int columnCount = md.getColumnCount();//获取行的数量
+//            int columnCount = md.getColumnCount();//获取行的数量
             while (rs.next()) {
+                DigitalFoundation DF = new DigitalFoundation(rs.getString("interface_id"),
+                        rs.getString("interface_name"), rs.getString("s_interface_obj_id"),
+                        rs.getString("t_interface_obj_id"), rs.getString("f_interface_id"),
+                        rs.getString("source_interface"), rs.getString("source_interface_type"),
+                        rs.getString("source_system_id"), rs.getString("source_system"),
+                        rs.getString("target_interface"), rs.getString("target_interface_type"),
+                        rs.getString("target_system_id"), rs.getString("target_system"),
+                        rs.getString("integration_platform"), rs.getString("scenario_id"),
+                        rs.getString("scenario_name"), rs.getString("remark"));
+                fnAffectedList.add(DF);
 
-                for (int i = 1; i <= columnCount/17; i++) {
-                    for(int j=1;j<=17;j++){
-                        DigitalFoundation df = new DigitalFoundation();
-                        df.setInterface_id(rs.getString(j));
-                    }
-                    String columnValue = rs.getString(i);
-
-//                    if("target_interface".equals(md.getColumnName(i))){
-//
-//                        DigitalFoundation DF = new DigitalFoundation();
-//                        DF.setTarget_interface(rs.getObject(i)+"");
-////                        System.out.println(rs.getObject(i)+"");
-//                        fnAffectedList.add(DF);
+//                for (int i = 1; i <= columnCount; i++) {
+//                    for(int j=1;j<=17;j++){
+//                        System.out.println(md.getColumnName(j) +"******"+ rs.getString(j));
+////                        使用rs.getObject(i)+""或者rs.getString("columnlabel名字") 来获取string形式的value
+////                        使用md.getColumnName(i)获取 键
+////                        interface_id**interface_name**s_interface_obj_id**t_interface_obj_id**f_interface_id
+////                        source_interface**source_interface_type**source_system_id**source_system**
+////                        target_interface**target_interface_type**target_system_id**
+////                        target_system**integration_platform**scenario_id**scenario_name**remark
 //                    }
-//                    if("target_interface".equals(md.getColumnName(i))){
-//                        DigitalFoundation DF = new DigitalFoundation();
-//                        DF.setTarget_interface(rs.getObject(i)+"");
-//                    }
-//                    if("integration_platform".equals(md.getColumnName(i))){
-//                        DigitalFoundation DF = new DigitalFoundation();
-//                        DF.setIntegration_platform(rs.getObject(i)+"");
-//                        fnAffectedList.add(DF);
-//                    }
-                }
+//                    String columnValue = rs.getString(i);
+//                }
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
@@ -197,34 +199,6 @@ public class PortalController {
         }
 
 
-//        CallableStatement proc = null;
-//        try {
-//            sql4StoresProc = "{ ? = call fn_affected_by_systemid("+"337"+") }";
-//            proc = conn.prepareCall(sql4StoresProc);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            proc.execute();
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-////            ResultSet rs = (ResultSet) proc.getObject(1);
-//            ResultSet rs = proc.executeQuery();
-//            while(rs.next()){
-//                String id = rs.getString(1);
-//                System.out.println("id"+id);
-//            }
-//            ResultSetMetaData md = rs.getMetaData();
-//            int columnCount = md.getColumnCount();
-//            System.out.println("columnCount:"+ columnCount);
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
 
         PageHelper.startPage(pageIndex, pageSize);
 //        List<DigitalFoundation> fnAffectedList = digitalfoundationMapper.FnAffectedById(system_id,interface_id);
@@ -349,9 +323,10 @@ public class PortalController {
         //写Gexf文件
         StaxGraphWriter graphWriter = new StaxGraphWriter();
         try {
-            String uploadDir = ResourceUtils.getURL("classpath:").getPath()+"/static/data/";
+//            String uploadDir = ResourceUtils.getURL("classpath:").getPath()+"/static/data/";
 //            File gexfFile = new File(uploadDir+"demo.gexf");
-            File gexfFile = new File("D://demo.gexf");
+//            File gexfFile = new File("D://demo.gexf");
+            File gexfFile = new File("/home/appadm/DF/demo.gexf");
             Writer out;
             out =  new FileWriter(gexfFile, false);
             graphWriter.writeToStream(gexf, out, "UTF-8");

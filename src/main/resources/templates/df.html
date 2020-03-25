@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:include="/header">
+<head th:include="header">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 </head>
 
@@ -147,7 +147,7 @@
                 node.value = node.symbolSize;
                 node.symbolSize /= 1.5;
                 node.label = {
-                    show: node.symbolSize > 30
+                    show: node.symbolSize > 10
                 };
                 node.category = node.attributes.modularity_class;
             });
@@ -155,7 +155,7 @@
                 document.getElementById('queryInput').value = "system=" + node.name;
                 $("#table").dataTable().fnDraw();
                // myChart.clear();
-               setTimeout("createMap()",3000);
+               setTimeout("createMap()",1500);
                 // search();
                 // createMap();
             });
@@ -168,7 +168,7 @@
                         return a.name;
                     })
                 }],
-                animationDuration: 1500,
+                animationDuration: 100,
                 animationEasingUpdate: 'quinticInOut',
                 series: [
                     {
@@ -192,11 +192,11 @@
                         },
                         lineStyle: {
                             color: 'source',
-                            curveness: 0.3
+                            curveness: 0.1
                         },
                         emphasis: {
                             lineStyle: {
-                                width: 10
+                                width: 2
                             }
                         }
                     }
@@ -242,6 +242,6 @@
 </script>
 
 </body>
-<footer th:include="/footer">
+<footer th:include="footer">
 </footer>
 </html>

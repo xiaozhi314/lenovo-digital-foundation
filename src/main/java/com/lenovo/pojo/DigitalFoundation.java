@@ -19,30 +19,33 @@ public class DigitalFoundation {
     private String scenario_name;
     private String remark;
 
-//    public DigitalFoundation(String interface_id, String interface_name, String s_interface_obj_id,
-//                             String t_interface_obj_id, String f_interface_id, String source_interface,
-//                             String source_interface_type, String source_system_id, String source_system,
-//                             String target_interface, String target_interface_type, String target_system_id,
-//                             String target_system, String integration_platform, String scenario_id,
-//                             String scenario_name, String remark) {
-//        this.interface_id = interface_id;
-//        this.interface_name = interface_name;
-//        this.s_interface_obj_id = s_interface_obj_id;
-//        this.t_interface_obj_id = t_interface_obj_id;
-//        this.f_interface_id = f_interface_id;
-//        this.source_interface = source_interface;
-//        this.source_interface_type = source_interface_type;
-//        this.source_system_id = source_system_id;
-//        this.source_system = source_system;
-//        this.target_interface = target_interface;
-//        this.target_interface_type = target_interface_type;
-//        this.target_system_id = target_system_id;
-//        this.target_system = target_system;
-//        this.integration_platform = integration_platform;
-//        this.scenario_id = scenario_id;
-//        this.scenario_name = scenario_name;
-//        this.remark = remark;
-//    }
+    public DigitalFoundation(String interface_id, String interface_name, String s_interface_obj_id,
+                             String t_interface_obj_id, String f_interface_id, String source_interface,
+                             String source_interface_type, String source_system_id, String source_system,
+                             String target_interface, String target_interface_type, String target_system_id,
+                             String target_system, String integration_platform, String scenario_id,
+                             String scenario_name, String remark) {
+        this.interface_id = interface_id;
+        this.interface_name = interface_name;
+        this.s_interface_obj_id = s_interface_obj_id;
+        this.t_interface_obj_id = t_interface_obj_id;
+        this.f_interface_id = f_interface_id;
+        this.source_interface = source_interface;
+        this.source_interface_type = source_interface_type;
+        this.source_system_id = source_system_id;
+        this.source_system = source_system;
+        this.target_interface = target_interface;
+        this.target_interface_type = target_interface_type;
+        this.target_system_id = target_system_id;
+        this.target_system = target_system;
+        this.integration_platform = integration_platform;
+        this.scenario_id = scenario_id;
+        this.scenario_name = scenario_name;
+        this.remark = remark;
+    }
+    public DigitalFoundation(){
+
+    }
 
     public String getS_interface_obj_id() {
         return s_interface_obj_id;

@@ -23,6 +23,9 @@ public interface DigitalFoundationMapper {
     @SelectProvider(type = DfDaoProvider.class, method = "fn_affected_by_id")
     List<DigitalFoundation> FnAffectedById(String system_id, String interface_id);
 
+    @SelectProvider(type = DfDaoProvider.class, method = "sys_name2system_id")
+    int findSysIdbySysName(String name);
+
     class DfDaoProvider {
         public String findDfByQuery(String s,String source, String target, String scenario) {
             String sql = "select * from public.v_interface_scenario Where 1=1";
@@ -64,7 +67,10 @@ public interface DigitalFoundationMapper {
 //            String sql = "select * from public.v_interface_scenario Where 1=1";
             return sql;
         }
-
+        public String sys_name2system_id(String name){
+            String sql = "select system_id from system where system_name='"+name+"'";
+            return sql;
+        }
     }
 
 }
